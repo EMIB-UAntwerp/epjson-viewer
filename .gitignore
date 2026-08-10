@@ -1,0 +1,29 @@
+# Dependencies / build
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Research data — contains real addresses, never commit
+data/
+
+# Large reference files (EnergyPlus schema + sources, publicly available upstream)
+docs/references/
+
+# Local
+*.local
+.DS_Store
+
+# agents
+.agents/*
+
+# Cursor
+.cursorignore
+.cursorindexingignore
+
+# Claude
+CLAUDE.md
+.claude/*
+
+# Codex
+AGENTS.md
+.codex/*

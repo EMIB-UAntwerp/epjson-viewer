@@ -1,0 +1,2481 @@
+{
+ "Version": {
+  "Version 1": {
+   "version_identifier": "26.1"
+  }
+ },
+ "Building": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A": {
+   "north_axis": 0,
+   "terrain": "City",
+   "name": "Demo house"
+  }
+ },
+ "Site:Location": {
+  "Demo Location": {
+   "city": "Anonymized",
+   "reference_system": "local coordinates"
+  }
+ },
+ "SimulationControl": {
+  "SimulationControl 1": {
+   "do_zone_sizing_calculation": "Yes",
+   "do_system_sizing_calculation": "No",
+   "do_plant_sizing_calculation": "No",
+   "run_simulation_for_sizing_period": "No",
+   "run_simulation_for_weather_file_run_periods": "Yes",
+   "do_hvac_sizing_simulation_for_sizing_periods": "No",
+   "maximum_number_of_hvac_sizing_simulation_passes": 1
+  }
+ },
+ "Timestep": {
+  "Timestep 1": {
+   "number_of_timesteps_per_hour": 4
+  }
+ },
+ "GlobalGeometryRules": {
+  "GlobalGeometryRules 1": {
+   "coordinate_system": "Relative",
+   "starting_vertex_position": "UpperLeftCorner",
+   "vertex_entry_direction": "Counterclockwise"
+  }
+ },
+ "RunPeriod": {
+  "Run Period Europe": {
+   "begin_day_of_month": 1,
+   "begin_month": 1,
+   "end_day_of_month": 31,
+   "end_month": 12,
+   "day_of_week_for_start_day": "Sunday",
+   "use_weather_file_holidays_and_special_days": "Yes",
+   "use_weather_file_daylight_saving_period": "Yes",
+   "apply_weekend_holiday_rule": "No",
+   "use_weather_file_rain_indicators": "Yes",
+   "use_weather_file_snow_indicators": "Yes"
+  }
+ },
+ "HeatBalanceAlgorithm": {
+  "HeatBalanceAlgorithm 1": {
+   "algorithm": "ConductionTransferFunction"
+  }
+ },
+ "SurfaceConvectionAlgorithm:Inside": {
+  "SurfaceConvectionAlgorithm:Inside 1": {
+   "algorithm": "TARP"
+  }
+ },
+ "SurfaceConvectionAlgorithm:Outside": {
+  "SurfaceConvectionAlgorithm:Outside 1": {
+   "algorithm": "TARP"
+  }
+ },
+ "ShadowCalculation": {
+  "ShadowCalculation 1": {
+   "shading_calculation_method": "PixelCounting",
+   "shading_calculation_update_frequency": 20,
+   "shading_calculation_update_frequency_method": "Periodic"
+  }
+ },
+ "Zone": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "direction_of_relative_north": 0,
+   "x_origin": 0,
+   "y_origin": 0,
+   "z_origin": 0,
+   "multiplier": 1,
+   "ceiling_height": 3.708400000000001,
+   "volume": 341.53
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "direction_of_relative_north": 0,
+   "x_origin": 0,
+   "y_origin": 0,
+   "z_origin": 0,
+   "multiplier": 1,
+   "ceiling_height": 4.464024129582064,
+   "volume": 342.13
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "direction_of_relative_north": 0,
+   "x_origin": 0,
+   "y_origin": 0,
+   "z_origin": 0,
+   "multiplier": 1,
+   "ceiling_height": 3.8415040304179353,
+   "volume": 294.42
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4": {
+   "direction_of_relative_north": 0,
+   "x_origin": 0,
+   "y_origin": 0,
+   "z_origin": 0,
+   "multiplier": 1,
+   "ceiling_height": 4.77147184,
+   "volume": 184.24
+  }
+ },
+ "BuildingSurface:Detailed": {
+  "RoofSurface_UUID_54421a44-70a9-41ec-90b3-972e9fc0ff0e_F1": {
+   "surface_type": "Roof",
+   "construction_name": "ROOF_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 4.471710089332191,
+     "vertex_y_coordinate": 2.7907851760974154,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "RoofSurface_UUID_000bdd20-0bf9-4db2-aacb-c03f9f358c2e_F4": {
+   "surface_type": "Roof",
+   "construction_name": "ROOF_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 2.439964969351422,
+     "vertex_y_coordinate": -3.1458046439220197,
+     "vertex_z_coordinate": 16.785400000000003
+    },
+    {
+     "vertex_x_coordinate": 3.485226339340443,
+     "vertex_y_coordinate": -0.09163805391290225,
+     "vertex_z_coordinate": 13.55866002
+    },
+    {
+     "vertex_x_coordinate": 3.9478764293307904,
+     "vertex_y_coordinate": 1.2601869160716888,
+     "vertex_z_coordinate": 12.13044057
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.118700770000002
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 16.780135
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "RoofSurface_UUID_93660776-5bc2-4150-9db8-5d772f074621_F4": {
+   "surface_type": "Roof",
+   "construction_name": "ROOF_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 2.439964969351422,
+     "vertex_y_coordinate": -3.1458046439220197,
+     "vertex_z_coordinate": 16.785400000000003
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 16.780135
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.035300000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.0448
+    },
+    {
+     "vertex_x_coordinate": 2.2449487293488346,
+     "vertex_y_coordinate": -3.7156258039176464,
+     "vertex_z_coordinate": 16.18861158
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F2": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F3": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F4": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.0448
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.035300000000001
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_526f5159-ac80-4cf2-a13d-31a68073a166_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_526f5159-ac80-4cf2-a13d-31a68073a166_F2": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_526f5159-ac80-4cf2-a13d-31a68073a166_F3": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_526f5159-ac80-4cf2-a13d-31a68073a166_F4": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 16.780135
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.035300000000001
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_e854aa11-2d18-4a93-a382-a7cacc1ca6a7_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_e854aa11-2d18-4a93-a382-a7cacc1ca6a7_F2": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_e854aa11-2d18-4a93-a382-a7cacc1ca6a7_F3": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_e854aa11-2d18-4a93-a382-a7cacc1ca6a7_F4": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 16.780135
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.118700770000002
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306747943,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -5.2639754506526515,
+     "vertex_y_coordinate": -0.7572894439217634,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_F2": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_F3": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_F4": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.118700770000002
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "WallSurface_UUID_f430ca1a-13c4-4c61-837a-a6475967bb35_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 4.471710083307698,
+     "vertex_y_coordinate": 2.7907851781637874,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 4.471710083307698,
+     "vertex_y_coordinate": 2.7907851781637874,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_f430ca1a-13c4-4c61-837a-a6475967bb35_F2": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 3.9856267416034825,
+     "vertex_y_coordinate": 1.3704901853052434,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 3.9856267416034825,
+     "vertex_y_coordinate": 1.3704901853052434,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_f430ca1a-13c4-4c61-837a-a6475967bb35_F3": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 3.9856267416034825,
+     "vertex_y_coordinate": 1.3704901853052434,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 3.9856267416034825,
+     "vertex_y_coordinate": 1.3704901853052434,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_f430ca1a-13c4-4c61-837a-a6475967bb35_F4": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 2.4399649649567436,
+     "vertex_y_coordinate": -3.1458046424086206,
+     "vertex_z_coordinate": 16.785400000000003
+    },
+    {
+     "vertex_x_coordinate": 2.244948734762147,
+     "vertex_y_coordinate": -3.7156258057802916,
+     "vertex_z_coordinate": 16.18861158
+    },
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 12.0448
+    },
+    {
+     "vertex_x_coordinate": 0.8907180882524699,
+     "vertex_y_coordinate": -7.672574833530234,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 3.9856267416034825,
+     "vertex_y_coordinate": 1.3704901853052434,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 3.9478764279338066,
+     "vertex_y_coordinate": 1.26018691653735,
+     "vertex_z_coordinate": 12.13044057
+    },
+    {
+     "vertex_x_coordinate": 3.4852263426291756,
+     "vertex_y_coordinate": -0.09163805504795164,
+     "vertex_z_coordinate": 13.55866002
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_ca31a8ac-d245-460c-ba68-a91e7fe62d55_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Adiabatic",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "WallSurface_UUID_383af8b5-675c-4954-a741-467cf9c27e58_F1": {
+   "surface_type": "Wall",
+   "construction_name": "WALL_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": 4.471710089332191,
+     "vertex_y_coordinate": 2.7907851760974154,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 4.471710089332191,
+     "vertex_y_coordinate": 2.7907851760974154,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Outdoors",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "SunExposed",
+   "wind_exposure": "WindExposed"
+  },
+  "GroundSurface_UUID_7c16d2f9-4983-4be5-85fa-0f66f84fca72_F1": {
+   "surface_type": "Floor",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": -2.8072659206518438,
+     "vertex_y_coordinate": 5.874369176075561,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 4.471710089332191,
+     "vertex_y_coordinate": 2.7907851760974154,
+     "vertex_z_coordinate": 0.0
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 0.0
+    }
+   ],
+   "outside_boundary_condition": "Ground",
+   "outside_boundary_condition_object": "",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab1_Flr": {
+   "surface_type": "Floor",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab1_Clg",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab1_Clg": {
+   "surface_type": "Ceiling",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 3.708400000000001
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 3.708400000000001
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab1_Flr",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab2_Flr": {
+   "surface_type": "Floor",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab2_Clg",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab2_Clg": {
+   "surface_type": "Ceiling",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": 3.9856267393333837,
+     "vertex_y_coordinate": 1.3704901860910468,
+     "vertex_z_coordinate": 8.172424129582065
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 8.172424129582065
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab2_Flr",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab3_Flr": {
+   "surface_type": "Floor",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 3.9856234993085655,
+     "vertex_y_coordinate": 1.3704807190076678,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab3_Clg",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab3_Clg": {
+   "surface_type": "Ceiling",
+   "construction_name": "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "vertices": [
+    {
+     "vertex_x_coordinate": -6.929249920649454,
+     "vertex_y_coordinate": -5.252542823902331,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 0.8907180893293116,
+     "vertex_y_coordinate": -7.672574833908584,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": 3.9856234993085655,
+     "vertex_y_coordinate": 1.3704807190076678,
+     "vertex_z_coordinate": 12.01392816
+    },
+    {
+     "vertex_x_coordinate": -3.6423296306456905,
+     "vertex_y_coordinate": 3.62019243609393,
+     "vertex_z_coordinate": 12.01392816
+    }
+   ],
+   "outside_boundary_condition": "Surface",
+   "outside_boundary_condition_object": "ID_00000000-0000-4000-8000-000000000000_Building_A_Slab3_Flr",
+   "is_shared": false,
+   "sun_exposure": "NoSun",
+   "wind_exposure": "NoWind"
+  }
+ },
+ "InternalMass": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1_Vertical_Internal_Mass": {
+   "construction_name": "BE_Internal_Partition_Const",
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "surface_area": 46.05
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2_Vertical_Internal_Mass": {
+   "construction_name": "BE_Internal_Partition_Const",
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "surface_area": 38.32
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3_Vertical_Internal_Mass": {
+   "construction_name": "BE_Internal_Partition_Const",
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "surface_area": 38.32
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4_Vertical_Internal_Mass": {
+   "construction_name": "BE_Internal_Partition_Const",
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "surface_area": 19.31
+  }
+ },
+ "People": {
+  "People_ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "number_of_people_schedule_name": "People_Number_Schedule",
+   "number_of_people_calculation_method": "People",
+   "number_of_people": 3,
+   "activity_level_schedule_name": "People_Activity_Schedule",
+   "carbon_dioxide_generation_rate": 3.82e-08,
+   "fraction_radiant": 0.3,
+   "sensible_heat_fraction": 0.5,
+   "mean_radiant_temperature_calculation_type": "EnclosureAveraged"
+  },
+  "People_ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "number_of_people_schedule_name": "People_Number_Schedule",
+   "number_of_people_calculation_method": "People",
+   "number_of_people": 2,
+   "activity_level_schedule_name": "People_Activity_Schedule",
+   "carbon_dioxide_generation_rate": 3.82e-08,
+   "fraction_radiant": 0.3,
+   "sensible_heat_fraction": 0.5,
+   "mean_radiant_temperature_calculation_type": "EnclosureAveraged"
+  },
+  "People_ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "number_of_people_schedule_name": "People_Number_Schedule",
+   "number_of_people_calculation_method": "People",
+   "number_of_people": 2,
+   "activity_level_schedule_name": "People_Activity_Schedule",
+   "carbon_dioxide_generation_rate": 3.82e-08,
+   "fraction_radiant": 0.3,
+   "sensible_heat_fraction": 0.5,
+   "mean_radiant_temperature_calculation_type": "EnclosureAveraged"
+  },
+  "People_ID_00000000-0000-4000-8000-000000000000_Building_A_F4": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "number_of_people_schedule_name": "People_Number_Schedule",
+   "number_of_people_calculation_method": "People",
+   "number_of_people": 1,
+   "activity_level_schedule_name": "People_Activity_Schedule",
+   "carbon_dioxide_generation_rate": 3.82e-08,
+   "fraction_radiant": 0.3,
+   "sensible_heat_fraction": 0.5,
+   "mean_radiant_temperature_calculation_type": "EnclosureAveraged"
+  }
+ },
+ "Lights": {
+  "Lights_ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "schedule_name": "Lighting_Schedule",
+   "design_level_calculation_method": "LightingLevel",
+   "lighting_level": 460.4806631057046,
+   "radiant_fraction": 0.4,
+   "fraction_visible": 0.1
+  },
+  "Lights_ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "schedule_name": "Lighting_Schedule",
+   "design_level_calculation_method": "LightingLevel",
+   "lighting_level": 383.2042165577303,
+   "radiant_fraction": 0.4,
+   "fraction_visible": 0.1
+  },
+  "Lights_ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "schedule_name": "Lighting_Schedule",
+   "design_level_calculation_method": "LightingLevel",
+   "lighting_level": 383.2042165577303,
+   "radiant_fraction": 0.4,
+   "fraction_visible": 0.1
+  },
+  "Lights_ID_00000000-0000-4000-8000-000000000000_Building_A_F4": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "schedule_name": "Lighting_Schedule",
+   "design_level_calculation_method": "LightingLevel",
+   "lighting_level": 193.06755746232866,
+   "radiant_fraction": 0.4,
+   "fraction_visible": 0.1
+  }
+ },
+ "ElectricEquipment": {
+  "ElectricEquipment_ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "schedule_name": "Equipment_Schedule",
+   "design_level_calculation_method": "EquipmentLevel",
+   "design_level": 184.19226524228185,
+   "fraction_latent": 0.1,
+   "fraction_radiant": 0.3,
+   "fraction_lost": 0.1
+  },
+  "ElectricEquipment_ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "schedule_name": "Equipment_Schedule",
+   "design_level_calculation_method": "EquipmentLevel",
+   "design_level": 153.28168662309213,
+   "fraction_latent": 0.1,
+   "fraction_radiant": 0.3,
+   "fraction_lost": 0.1
+  },
+  "ElectricEquipment_ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "schedule_name": "Equipment_Schedule",
+   "design_level_calculation_method": "EquipmentLevel",
+   "design_level": 153.28168662309213,
+   "fraction_latent": 0.1,
+   "fraction_radiant": 0.3,
+   "fraction_lost": 0.1
+  },
+  "ElectricEquipment_ID_00000000-0000-4000-8000-000000000000_Building_A_F4": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "schedule_name": "Equipment_Schedule",
+   "design_level_calculation_method": "EquipmentLevel",
+   "design_level": 77.22702298493147,
+   "fraction_latent": 0.1,
+   "fraction_radiant": 0.3,
+   "fraction_lost": 0.1
+  }
+ },
+ "ZoneInfiltration:DesignFlowRate": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Infiltration": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "schedule_name": "Infiltration_Schedule",
+   "design_flow_rate_calculation_method": "AirChanges/Hour",
+   "air_changes_per_hour": 1.0,
+   "constant_term_coefficient": 1.0,
+   "temperature_term_coefficient": 0.0,
+   "velocity_term_coefficient": 0.0,
+   "velocity_squared_term_coefficient": 0.0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Infiltration": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "schedule_name": "Infiltration_Schedule",
+   "design_flow_rate_calculation_method": "AirChanges/Hour",
+   "air_changes_per_hour": 1.0,
+   "constant_term_coefficient": 1.0,
+   "temperature_term_coefficient": 0.0,
+   "velocity_term_coefficient": 0.0,
+   "velocity_squared_term_coefficient": 0.0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Infiltration": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "schedule_name": "Infiltration_Schedule",
+   "design_flow_rate_calculation_method": "AirChanges/Hour",
+   "air_changes_per_hour": 1.0,
+   "constant_term_coefficient": 1.0,
+   "temperature_term_coefficient": 0.0,
+   "velocity_term_coefficient": 0.0,
+   "velocity_squared_term_coefficient": 0.0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Infiltration": {
+   "zone_or_zonelist_or_space_or_spacelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "schedule_name": "Infiltration_Schedule",
+   "design_flow_rate_calculation_method": "AirChanges/Hour",
+   "air_changes_per_hour": 1.0,
+   "constant_term_coefficient": 1.0,
+   "temperature_term_coefficient": 0.0,
+   "velocity_term_coefficient": 0.0,
+   "velocity_squared_term_coefficient": 0.0
+  }
+ },
+ "ScheduleTypeLimits": {
+  "Fraction": {
+   "name": "Fraction",
+   "lower_limit_value": 0,
+   "upper_limit_value": 1,
+   "numeric_type": "Continuous",
+   "unit_type": "Dimensionless"
+  },
+  "On/Off": {
+   "lower_limit_value": 0.0,
+   "upper_limit_value": 1.0,
+   "numeric_type": "Discrete",
+   "unit_type": "Dimensionless"
+  },
+  "Any Number": {
+   "lower_limit_value": -1000000.0,
+   "upper_limit_value": 1000000.0,
+   "numeric_type": "Continuous",
+   "unit_type": "Dimensionless"
+  },
+  "Temperature": {
+   "name": "Temperature",
+   "lower_limit_value": -100.0,
+   "upper_limit_value": 200.0,
+   "numeric_type": "Continuous",
+   "unit_type": "Temperature"
+  },
+  "Control Type": {
+   "name": "Control Type",
+   "lower_limit_value": 0,
+   "upper_limit_value": 4,
+   "numeric_type": "Discrete",
+   "unit_type": "Control"
+  }
+ },
+ "ThermostatSetpoint:SingleHeating": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Heating Only Setpoint": {
+   "setpoint_temperature_schedule_name": "Heating Setpoint Schedule"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Heating Only Setpoint": {
+   "setpoint_temperature_schedule_name": "Heating Setpoint Schedule"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Heating Only Setpoint": {
+   "setpoint_temperature_schedule_name": "Heating Setpoint Schedule"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Heating Only Setpoint": {
+   "setpoint_temperature_schedule_name": "Heating Setpoint Schedule"
+  }
+ },
+ "ZoneControl:Thermostat": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Thermostat": {
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "control_type_schedule_name": "Heating Only Control Type Sched",
+   "control_1_object_type": "ThermostatSetpoint:SingleHeating",
+   "control_1_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Heating Only Setpoint"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Thermostat": {
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "control_type_schedule_name": "Heating Only Control Type Sched",
+   "control_1_object_type": "ThermostatSetpoint:SingleHeating",
+   "control_1_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Heating Only Setpoint"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Thermostat": {
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "control_type_schedule_name": "Heating Only Control Type Sched",
+   "control_1_object_type": "ThermostatSetpoint:SingleHeating",
+   "control_1_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Heating Only Setpoint"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Thermostat": {
+   "zone_or_zonelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "control_type_schedule_name": "Heating Only Control Type Sched",
+   "control_1_object_type": "ThermostatSetpoint:SingleHeating",
+   "control_1_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Heating Only Setpoint"
+  }
+ },
+ "ZoneHVAC:IdealLoadsAirSystem": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Ideal Loads": {
+   "zone_supply_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Inlet Node",
+   "maximum_heating_supply_air_temperature": 50,
+   "minimum_cooling_supply_air_temperature": 13,
+   "maximum_heating_supply_air_humidity_ratio": 0.0156,
+   "minimum_cooling_supply_air_humidity_ratio": 0.0077,
+   "heating_limit": "NoLimit",
+   "cooling_limit": "LimitCapacity",
+   "maximum_cooling_air_flow_rate": 0,
+   "maximum_total_cooling_capacity": 0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Ideal Loads": {
+   "zone_supply_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Inlet Node",
+   "maximum_heating_supply_air_temperature": 50,
+   "minimum_cooling_supply_air_temperature": 13,
+   "maximum_heating_supply_air_humidity_ratio": 0.0156,
+   "minimum_cooling_supply_air_humidity_ratio": 0.0077,
+   "heating_limit": "NoLimit",
+   "cooling_limit": "LimitCapacity",
+   "maximum_cooling_air_flow_rate": 0,
+   "maximum_total_cooling_capacity": 0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Ideal Loads": {
+   "zone_supply_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Inlet Node",
+   "maximum_heating_supply_air_temperature": 50,
+   "minimum_cooling_supply_air_temperature": 13,
+   "maximum_heating_supply_air_humidity_ratio": 0.0156,
+   "minimum_cooling_supply_air_humidity_ratio": 0.0077,
+   "heating_limit": "NoLimit",
+   "cooling_limit": "LimitCapacity",
+   "maximum_cooling_air_flow_rate": 0,
+   "maximum_total_cooling_capacity": 0
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Ideal Loads": {
+   "zone_supply_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Inlet Node",
+   "maximum_heating_supply_air_temperature": 50,
+   "minimum_cooling_supply_air_temperature": 13,
+   "maximum_heating_supply_air_humidity_ratio": 0.0156,
+   "minimum_cooling_supply_air_humidity_ratio": 0.0077,
+   "heating_limit": "NoLimit",
+   "cooling_limit": "LimitCapacity",
+   "maximum_cooling_air_flow_rate": 0,
+   "maximum_total_cooling_capacity": 0
+  }
+ },
+ "ZoneHVAC:EquipmentList": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Equipment List": {
+   "load_distribution_scheme": "SequentialLoad",
+   "equipment": [
+    {
+     "zone_equipment_object_type": "ZoneHVAC:IdealLoadsAirSystem",
+     "zone_equipment_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Ideal Loads",
+     "zone_equipment_cooling_sequence": 1,
+     "zone_equipment_heating_or_no_load_sequence": 1
+    }
+   ]
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Equipment List": {
+   "load_distribution_scheme": "SequentialLoad",
+   "equipment": [
+    {
+     "zone_equipment_object_type": "ZoneHVAC:IdealLoadsAirSystem",
+     "zone_equipment_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Ideal Loads",
+     "zone_equipment_cooling_sequence": 1,
+     "zone_equipment_heating_or_no_load_sequence": 1
+    }
+   ]
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Equipment List": {
+   "load_distribution_scheme": "SequentialLoad",
+   "equipment": [
+    {
+     "zone_equipment_object_type": "ZoneHVAC:IdealLoadsAirSystem",
+     "zone_equipment_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Ideal Loads",
+     "zone_equipment_cooling_sequence": 1,
+     "zone_equipment_heating_or_no_load_sequence": 1
+    }
+   ]
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Equipment List": {
+   "load_distribution_scheme": "SequentialLoad",
+   "equipment": [
+    {
+     "zone_equipment_object_type": "ZoneHVAC:IdealLoadsAirSystem",
+     "zone_equipment_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Ideal Loads",
+     "zone_equipment_cooling_sequence": 1,
+     "zone_equipment_heating_or_no_load_sequence": 1
+    }
+   ]
+  }
+ },
+ "ZoneHVAC:EquipmentConnections": {
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Connections": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "zone_conditioning_equipment_list_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Equipment List",
+   "zone_air_inlet_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Inlet Node",
+   "zone_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Node",
+   "zone_return_air_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1 Return Node"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Connections": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "zone_conditioning_equipment_list_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Equipment List",
+   "zone_air_inlet_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Inlet Node",
+   "zone_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Node",
+   "zone_return_air_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2 Return Node"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Connections": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "zone_conditioning_equipment_list_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Equipment List",
+   "zone_air_inlet_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Inlet Node",
+   "zone_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Node",
+   "zone_return_air_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3 Return Node"
+  },
+  "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Connections": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4",
+   "zone_conditioning_equipment_list_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Equipment List",
+   "zone_air_inlet_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Inlet Node",
+   "zone_air_node_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Node",
+   "zone_return_air_node_or_nodelist_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F4 Return Node"
+  }
+ },
+ "Schedule:Compact": {
+  "People_Number_Schedule": {
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: Weekdays"
+    },
+    {
+     "field": "Until: 07:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "Until: 09:00"
+    },
+    {
+     "field": 0.5
+    },
+    {
+     "field": "Until: 17:00"
+    },
+    {
+     "field": 0.1
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "For: Weekends Holidays AllOtherDays"
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.8
+    }
+   ],
+   "schedule_type_limits_name": "Fraction"
+  },
+  "People_Activity_Schedule": {
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 07:00"
+    },
+    {
+     "field": 72.0
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 120.0
+    }
+   ],
+   "schedule_type_limits_name": "Any Number"
+  },
+  "Lighting_Schedule": {
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: Weekdays"
+    },
+    {
+     "field": "Until: 06:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 0.5
+    },
+    {
+     "field": "Until: 17:00"
+    },
+    {
+     "field": 0.05
+    },
+    {
+     "field": "Until: 23:00"
+    },
+    {
+     "field": 0.8
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.05
+    },
+    {
+     "field": "For: Weekends Holidays AllOtherDays"
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Until: 17:00"
+    },
+    {
+     "field": 0.1
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.8
+    }
+   ],
+   "schedule_type_limits_name": "Fraction"
+  },
+  "Equipment_Schedule": {
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: Weekdays"
+    },
+    {
+     "field": "Until: 06:00"
+    },
+    {
+     "field": 0.2
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 0.6
+    },
+    {
+     "field": "Until: 17:00"
+    },
+    {
+     "field": 0.2
+    },
+    {
+     "field": "Until: 23:00"
+    },
+    {
+     "field": 0.8
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.2
+    },
+    {
+     "field": "For: Weekends Holidays AllOtherDays"
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 0.2
+    },
+    {
+     "field": "Until: 23:00"
+    },
+    {
+     "field": 0.6
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.2
+    }
+   ],
+   "schedule_type_limits_name": "Fraction"
+  },
+  "Infiltration_Schedule": {
+   "schedule_type_limits_name": "Fraction",
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 1.0
+    }
+   ]
+  },
+  "Heating Setpoint Schedule": {
+   "schedule_type_limits_name": "Temperature",
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 21.0
+    }
+   ]
+  },
+  "Heating Only Control Type Sched": {
+   "schedule_type_limits_name": "Control Type",
+   "data": [
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 1
+    }
+   ]
+  },
+  "Shading_Schedule": {
+   "schedule_type_limits_name": "Fraction",
+   "data": [
+    {
+     "field": "Through: 03/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Through: 09/30"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 08:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Until: 19:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.0
+    }
+   ]
+  },
+  "Window_Open_Schedule": {
+   "schedule_type_limits_name": "Fraction",
+   "data": [
+    {
+     "field": "Through: 03/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Through: 09/30"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 07:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "Until: 20:00"
+    },
+    {
+     "field": 0.0
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 1.0
+    },
+    {
+     "field": "Through: 12/31"
+    },
+    {
+     "field": "For: AllDays"
+    },
+    {
+     "field": "Until: 24:00"
+    },
+    {
+     "field": 0.0
+    }
+   ]
+  }
+ },
+ "Output:Variable": {
+  "OutputVariable 1": {
+   "variable_name": "Site Outdoor Air Drybulb Temperature",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 2": {
+   "variable_name": "Zone Air Temperature",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 3": {
+   "variable_name": "Zone Mean Radiant Temperature",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 4": {
+   "variable_name": "Zone Air Relative Humidity",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 5": {
+   "variable_name": "Zone Operative Temperature",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 6": {
+   "variable_name": "Zone Air System Sensible Cooling Energy",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 7": {
+   "variable_name": "Zone Air System Sensible Heating Energy",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 8": {
+   "variable_name": "Zone Ideal Loads Supply Air Total Heating Rate",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 9": {
+   "variable_name": "Zone Ideal Loads Supply Air Total Heating Energy",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 10": {
+   "variable_name": "Zone Lights Electricity Rate",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 11": {
+   "variable_name": "Zone Lights Electricity Energy",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 12": {
+   "variable_name": "Zone Electric Equipment Electricity Rate",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  },
+  "OutputVariable 13": {
+   "variable_name": "Zone Electric Equipment Electricity Energy",
+   "reporting_frequency": "Hourly",
+   "key_value": "*"
+  }
+ },
+ "Output:Meter": {
+  "Electricity:Facility": {
+   "key_name": "Electricity:Facility",
+   "reporting_frequency": "Hourly"
+  }
+ },
+ "Output:VariableDictionary": {
+  "Output:VariableDictionary 1": {
+   "key_field": "regular"
+  }
+ },
+ "Output:Surfaces:List": {
+  "Output:Surfaces:List 1": {
+   "report_type": "Details"
+  }
+ },
+ "OutputControl:Table:Style": {
+  "OutputControl:Table:Style 1": {
+   "column_separator": "HTML"
+  }
+ },
+ "Output:Table:SummaryReports": {
+  "Output:Table:SummaryReports 1": {
+   "reports": [
+    {
+     "report_name": "AnnualBuildingUtilityPerformanceSummary"
+    },
+    {
+     "report_name": "InputVerificationandResultsSummary"
+    },
+    {
+     "report_name": "ClimaticDataSummary"
+    },
+    {
+     "report_name": "EnvelopeSummary"
+    }
+   ]
+  }
+ },
+ "Material": {
+  "WALL_MATERIAL_BE_MFH_01_EXISTING": {
+   "conductivity": 0.22,
+   "density": 900.0,
+   "roughness": "MediumRough",
+   "solar_absorptance": 0.7,
+   "specific_heat": 840.0,
+   "thermal_absorptance": 0.9,
+   "thickness": 0.1,
+   "visible_absorptance": 0.7
+  },
+  "ROOF_MATERIAL_BE_MFH_01_EXISTING": {
+   "conductivity": 0.35,
+   "density": 800.0,
+   "roughness": "MediumRough",
+   "solar_absorptance": 0.75,
+   "specific_heat": 920.0,
+   "thermal_absorptance": 0.9,
+   "thickness": 0.1,
+   "visible_absorptance": 0.75
+  },
+  "FLOOR_MATERIAL_BE_MFH_01_EXISTING": {
+   "conductivity": 0.068,
+   "density": 2000.0,
+   "roughness": "MediumRough",
+   "solar_absorptance": 0.6,
+   "specific_heat": 840.0,
+   "thermal_absorptance": 0.9,
+   "thickness": 0.1,
+   "visible_absorptance": 0.6
+  },
+  "DOOR_MATERIAL_BE_MFH_01_EXISTING": {
+   "conductivity": 0.16,
+   "density": 700.0,
+   "roughness": "MediumSmooth",
+   "solar_absorptance": 0.7,
+   "specific_heat": 1300.0,
+   "thermal_absorptance": 0.9,
+   "thickness": 0.04,
+   "visible_absorptance": 0.7
+  },
+  "DefaultWallMaterial": {
+   "roughness": "MediumRough",
+   "thickness": 0.1,
+   "conductivity": 0.5,
+   "density": 1000.0,
+   "specific_heat": 1000.0
+  },
+  "DefaultRoofMaterial": {
+   "roughness": "MediumRough",
+   "thickness": 0.1,
+   "conductivity": 0.5,
+   "density": 1000.0,
+   "specific_heat": 1000.0
+  },
+  "DefaultFloorMaterial": {
+   "roughness": "MediumRough",
+   "thickness": 0.1,
+   "conductivity": 0.5,
+   "density": 1000.0,
+   "specific_heat": 1000.0
+  },
+  "DefaultDoorMaterial": {
+   "roughness": "MediumSmooth",
+   "thickness": 0.05,
+   "conductivity": 0.5,
+   "density": 1000.0,
+   "specific_heat": 1000.0
+  },
+  "BE_GypsumBlock_Material": {
+   "roughness": "MediumSmooth",
+   "thickness": 0.1,
+   "conductivity": 0.4,
+   "density": 900.0,
+   "specific_heat": 1000.0
+  }
+ },
+ "WindowMaterial:Glazing": {
+  "GLASS_BE_MFH_01_EXISTING": {
+   "back_side_infrared_hemispherical_emissivity": 0.84,
+   "back_side_solar_reflectance_at_normal_incidence": 0.071,
+   "back_side_visible_reflectance_at_normal_incidence": 0.08,
+   "conductivity": 1.0,
+   "front_side_infrared_hemispherical_emissivity": 0.84,
+   "front_side_solar_reflectance_at_normal_incidence": 0.071,
+   "front_side_visible_reflectance_at_normal_incidence": 0.08,
+   "infrared_transmittance_at_normal_incidence": 0.0,
+   "optical_data_type": "SpectralAverage",
+   "solar_transmittance_at_normal_incidence": 0.775,
+   "thickness": 0.006,
+   "visible_transmittance_at_normal_incidence": 0.881
+  },
+  "DefaultGlass": {
+   "optical_data_type": "SpectralAverage",
+   "thickness": 0.006,
+   "solar_transmittance_at_normal_incidence": 0.775,
+   "front_side_solar_reflectance_at_normal_incidence": 0.071,
+   "back_side_solar_reflectance_at_normal_incidence": 0.071,
+   "visible_transmittance_at_normal_incidence": 0.881,
+   "front_side_visible_reflectance_at_normal_incidence": 0.08,
+   "back_side_visible_reflectance_at_normal_incidence": 0.08,
+   "infrared_transmittance_at_normal_incidence": 0.0,
+   "front_side_infrared_hemispherical_emissivity": 0.84,
+   "back_side_infrared_hemispherical_emissivity": 0.84,
+   "conductivity": 0.9
+  }
+ },
+ "WindowMaterial:Gas": {
+  "AIR_GAP_BE_MFH_01_EXISTING": {
+   "gas_type": "Air",
+   "thickness": 0.012
+  }
+ },
+ "Construction": {
+  "WALL_CONSTRUCTION_BE_MFH_01_EXISTING": {
+   "outside_layer": "WALL_MATERIAL_BE_MFH_01_EXISTING"
+  },
+  "ROOF_CONSTRUCTION_BE_MFH_01_EXISTING": {
+   "outside_layer": "ROOF_MATERIAL_BE_MFH_01_EXISTING"
+  },
+  "FLOOR_CONSTRUCTION_BE_MFH_01_EXISTING": {
+   "outside_layer": "FLOOR_MATERIAL_BE_MFH_01_EXISTING"
+  },
+  "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING": {
+   "outside_layer": "GLASS_BE_MFH_01_EXISTING",
+   "layer_2": "AIR_GAP_BE_MFH_01_EXISTING",
+   "layer_3": "GLASS_BE_MFH_01_EXISTING"
+  },
+  "DOOR_CONSTRUCTION_BE_MFH_01_EXISTING": {
+   "outside_layer": "DOOR_MATERIAL_BE_MFH_01_EXISTING"
+  },
+  "DefaultWall": {
+   "outside_layer": "DefaultWallMaterial"
+  },
+  "DefaultRoof": {
+   "outside_layer": "DefaultRoofMaterial"
+  },
+  "DefaultFloor": {
+   "outside_layer": "DefaultFloorMaterial"
+  },
+  "DefaultExposedFloor": {
+   "outside_layer": "DefaultFloorMaterial"
+  },
+  "DefaultDoor": {
+   "outside_layer": "DefaultDoorMaterial"
+  },
+  "DefaultWindow": {
+   "outside_layer": "DefaultGlass"
+  },
+  "BE_Internal_Partition_Const": {
+   "outside_layer": "BE_GypsumBlock_Material"
+  }
+ },
+ "FenestrationSurface:Detailed": {
+  "Window_UUID_610de041-b37b-4893-aed3-13e380a57861": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F2",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -6.31885364203481,
+   "vertex_1_y_coordinate": -5.441441107279388,
+   "vertex_1_z_coordinate": 7.359151694588801,
+   "vertex_2_x_coordinate": -6.31885364203481,
+   "vertex_2_y_coordinate": -5.441441107279388,
+   "vertex_2_z_coordinate": 5.321280587960571,
+   "vertex_3_x_coordinate": -2.1356005173001904,
+   "vertex_3_y_coordinate": -6.736025235353736,
+   "vertex_3_z_coordinate": 5.321280587960571,
+   "vertex_4_x_coordinate": -2.1356005173001904,
+   "vertex_4_y_coordinate": -6.736025235353736,
+   "vertex_4_z_coordinate": 7.359151694588801
+  },
+  "Window_UUID_bd134cb1-5c92-4673-a286-181165f1e828": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F3",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -6.154177155025536,
+   "vertex_1_y_coordinate": -5.492403255630052,
+   "vertex_1_z_coordinate": 10.856130778646088,
+   "vertex_2_x_coordinate": -6.154177155025536,
+   "vertex_2_y_coordinate": -5.492403255630052,
+   "vertex_2_z_coordinate": 8.985154409415253,
+   "vertex_3_x_coordinate": -2.0843525510572363,
+   "vertex_3_y_coordinate": -6.751884855068056,
+   "vertex_3_z_coordinate": 8.985154409415253,
+   "vertex_4_x_coordinate": -2.0843525510572363,
+   "vertex_4_y_coordinate": -6.751884855068056,
+   "vertex_4_z_coordinate": 10.856130778646088
+  },
+  "Window_UUID_2969680a-8ca6-441d-afb3-b5d334788667": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F2",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -1.373816837760387,
+   "vertex_1_y_coordinate": -6.971773116529221,
+   "vertex_1_z_coordinate": 7.3596938497488775,
+   "vertex_2_x_coordinate": -1.373816837760387,
+   "vertex_2_y_coordinate": -6.971773116529221,
+   "vertex_2_z_coordinate": 5.371465454961493,
+   "vertex_3_x_coordinate": 0.15465308871353045,
+   "vertex_3_y_coordinate": -7.444786067935638,
+   "vertex_3_z_coordinate": 5.371465454961493,
+   "vertex_4_x_coordinate": 0.15465308871353045,
+   "vertex_4_y_coordinate": -7.444786067935638,
+   "vertex_4_z_coordinate": 7.3596938497488775
+  },
+  "Window_UUID_a1920101-7537-4052-81b0-39240d527138": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F3",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -1.3605742310464848,
+   "vertex_1_y_coordinate": -6.9758712831826415,
+   "vertex_1_z_coordinate": 10.900295308493932,
+   "vertex_2_x_coordinate": -1.3605742310464848,
+   "vertex_2_y_coordinate": -6.9758712831826415,
+   "vertex_2_z_coordinate": 9.086217598599346,
+   "vertex_3_x_coordinate": 0.16088090592529625,
+   "vertex_3_y_coordinate": -7.44671337978798,
+   "vertex_3_z_coordinate": 9.086217598599346,
+   "vertex_4_x_coordinate": 0.16088090592529625,
+   "vertex_4_y_coordinate": -7.44671337978798,
+   "vertex_4_z_coordinate": 10.900295308493932
+  },
+  "Door_UUID_c1be221d-68ff-4751-acd2-96c0a5171fea": {
+   "surface_type": "Door",
+   "construction_name": "DOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -0.5474646209040657,
+   "vertex_1_y_coordinate": -7.227502911555348,
+   "vertex_1_z_coordinate": 2.9044713261489346,
+   "vertex_2_x_coordinate": -0.5474646209040657,
+   "vertex_2_y_coordinate": -7.227502911555348,
+   "vertex_2_z_coordinate": 0.09999999999999964,
+   "vertex_3_x_coordinate": 0.3016200843558181,
+   "vertex_3_y_coordinate": -7.4902676905621774,
+   "vertex_3_z_coordinate": 0.09999999999999964,
+   "vertex_4_x_coordinate": 0.3016200843558181,
+   "vertex_4_y_coordinate": -7.4902676905621774,
+   "vertex_4_z_coordinate": 2.9044713261489346
+  },
+  "Door_UUID_484df05c-f65e-4c44-b655-4e8152078c63": {
+   "surface_type": "Door",
+   "construction_name": "DOOR_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -2.2370940498949494,
+   "vertex_1_y_coordinate": -6.704616206872743,
+   "vertex_1_z_coordinate": 2.9462251677838385,
+   "vertex_2_x_coordinate": -2.2370940498949494,
+   "vertex_2_y_coordinate": -6.704616206872743,
+   "vertex_2_z_coordinate": 0.09999999999999964,
+   "vertex_3_x_coordinate": -1.4122768507222645,
+   "vertex_3_y_coordinate": -6.959870962658897,
+   "vertex_3_z_coordinate": 0.09999999999999964,
+   "vertex_4_x_coordinate": -1.4122768507222645,
+   "vertex_4_y_coordinate": -6.959870962658897,
+   "vertex_4_z_coordinate": 2.9462251677838385
+  },
+  "Window_UUID_ce8a33cb-21b2-47c2-a5c1-44bbb5143e6f": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -3.4886875057709403,
+   "vertex_1_y_coordinate": -6.317287739220774,
+   "vertex_1_z_coordinate": 2.945763972443352,
+   "vertex_2_x_coordinate": -3.4886875057709403,
+   "vertex_2_y_coordinate": -6.317287739220774,
+   "vertex_2_z_coordinate": 0.7086882462511177,
+   "vertex_3_x_coordinate": -2.693545069778338,
+   "vertex_3_y_coordinate": -6.563359097199282,
+   "vertex_3_z_coordinate": 0.7086882462511177,
+   "vertex_4_x_coordinate": -2.693545069778338,
+   "vertex_4_y_coordinate": -6.563359097199282,
+   "vertex_4_z_coordinate": 2.945763972443352
+  },
+  "Window_UUID_ac9fee9f-b3be-48d3-9e0e-16b3eeb9ccce": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -5.389056111482205,
+   "vertex_1_y_coordinate": -5.729183945077239,
+   "vertex_1_z_coordinate": 2.9109780010764847,
+   "vertex_2_x_coordinate": -5.389056111482205,
+   "vertex_2_y_coordinate": -5.729183945077239,
+   "vertex_2_z_coordinate": 0.7582356138717419,
+   "vertex_3_x_coordinate": -4.583576068747789,
+   "vertex_3_y_coordinate": -5.978454464377137,
+   "vertex_3_z_coordinate": 0.7582356138717419,
+   "vertex_4_x_coordinate": -4.583576068747789,
+   "vertex_4_y_coordinate": -5.978454464377137,
+   "vertex_4_z_coordinate": 2.9109780010764847
+  },
+  "Window_UUID_3d3241ad-6fb8-4876-bcf9-3221e6edb4dd": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_bebc6cb9-0ae4-43ab-87e1-72d1eb1451fc_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": -6.625240209221374,
+   "vertex_1_y_coordinate": -5.3466241848655045,
+   "vertex_1_z_coordinate": 2.908548252048604,
+   "vertex_2_x_coordinate": -6.625240209221374,
+   "vertex_2_y_coordinate": -5.3466241848655045,
+   "vertex_2_z_coordinate": 0.7711983956974962,
+   "vertex_3_x_coordinate": -5.837691833323333,
+   "vertex_3_y_coordinate": -5.590345422184328,
+   "vertex_3_z_coordinate": 0.7711983956974962,
+   "vertex_4_x_coordinate": -5.837691833323333,
+   "vertex_4_y_coordinate": -5.590345422184328,
+   "vertex_4_z_coordinate": 2.908548252048604
+  },
+  "Window_WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_Floor2": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_F2",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": 3.506049397400964,
+   "vertex_1_y_coordinate": 1.5119312448577116,
+   "vertex_1_z_coordinate": 6.676197034199314,
+   "vertex_2_x_coordinate": 3.506049397400964,
+   "vertex_2_y_coordinate": 1.5119312448577116,
+   "vertex_2_z_coordinate": 5.204627095382753,
+   "vertex_3_x_coordinate": -3.162752288713271,
+   "vertex_3_y_coordinate": 3.4787513773272654,
+   "vertex_3_z_coordinate": 5.204627095382753,
+   "vertex_4_x_coordinate": -3.162752288713271,
+   "vertex_4_y_coordinate": 3.4787513773272654,
+   "vertex_4_z_coordinate": 6.676197034199314
+  },
+  "Window_WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_Floor3": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_F3",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": 3.506049397400964,
+   "vertex_1_y_coordinate": 1.5119312448577116,
+   "vertex_1_z_coordinate": 10.726353933139475,
+   "vertex_2_x_coordinate": 3.506049397400964,
+   "vertex_2_y_coordinate": 1.5119312448577116,
+   "vertex_2_z_coordinate": 9.459998356442592,
+   "vertex_3_x_coordinate": -3.162752288713271,
+   "vertex_3_y_coordinate": 3.4787513773272654,
+   "vertex_3_z_coordinate": 9.459998356442592,
+   "vertex_4_x_coordinate": -3.162752288713271,
+   "vertex_4_y_coordinate": 3.4787513773272654,
+   "vertex_4_z_coordinate": 10.726353933139475
+  },
+  "Window_WallSurface_UUID_383af8b5-675c-4954-a741-467cf9c27e58_Floor1": {
+   "surface_type": "Window",
+   "construction_name": "WINDOW_CONSTRUCTION_BE_MFH_01_EXISTING",
+   "building_surface_name": "WallSurface_UUID_383af8b5-675c-4954-a741-467cf9c27e58_F1",
+   "view_factor_to_ground": "Autocalculate",
+   "multiplier": 1,
+   "vertex_1_x_coordinate": 4.0113176926127005,
+   "vertex_1_y_coordinate": 2.985820662721986,
+   "vertex_1_z_coordinate": 2.465968704414389,
+   "vertex_2_x_coordinate": 4.0113176926127005,
+   "vertex_2_y_coordinate": 2.985820662721986,
+   "vertex_2_z_coordinate": 1.2424312955856116,
+   "vertex_3_x_coordinate": -2.346873523932353,
+   "vertex_3_y_coordinate": 5.67933368945099,
+   "vertex_3_z_coordinate": 1.2424312955856116,
+   "vertex_4_x_coordinate": -2.346873523932353,
+   "vertex_4_y_coordinate": 5.67933368945099,
+   "vertex_4_z_coordinate": 2.465968704414389
+  }
+ },
+ "WindowMaterial:Shade": {
+  "Shading_Material": {
+   "solar_transmittance": 0.1,
+   "solar_reflectance": 0.5,
+   "visible_transmittance": 0.2,
+   "visible_reflectance": 0.5,
+   "infrared_hemispherical_emissivity": 0.9,
+   "infrared_transmittance": 0.05,
+   "thickness": 0.005,
+   "conductivity": 0.1,
+   "shade_to_glass_distance": 0.05,
+   "top_opening_multiplier": 0.5,
+   "bottom_opening_multiplier": 0.5,
+   "left_side_opening_multiplier": 0.5,
+   "right_side_opening_multiplier": 0.5,
+   "airflow_permeability": 0.0
+  }
+ },
+ "WindowShadingControl": {
+  "Shading_Control_ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "shading_type": "InteriorShade",
+   "shading_control_type": "OnIfScheduleAllows",
+   "schedule_name": "Shading_Schedule",
+   "shading_control_is_scheduled": "Yes",
+   "shading_device_material_name": "Shading_Material",
+   "fenestration_surfaces": [
+    {
+     "fenestration_surface_name": "Window_UUID_610de041-b37b-4893-aed3-13e380a57861"
+    },
+    {
+     "fenestration_surface_name": "Window_UUID_2969680a-8ca6-441d-afb3-b5d334788667"
+    },
+    {
+     "fenestration_surface_name": "Window_WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_Floor2"
+    }
+   ]
+  },
+  "Shading_Control_ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "shading_type": "InteriorShade",
+   "shading_control_type": "OnIfScheduleAllows",
+   "schedule_name": "Shading_Schedule",
+   "shading_control_is_scheduled": "Yes",
+   "shading_device_material_name": "Shading_Material",
+   "fenestration_surfaces": [
+    {
+     "fenestration_surface_name": "Window_UUID_bd134cb1-5c92-4673-a286-181165f1e828"
+    },
+    {
+     "fenestration_surface_name": "Window_UUID_a1920101-7537-4052-81b0-39240d527138"
+    },
+    {
+     "fenestration_surface_name": "Window_WallSurface_UUID_4c11302f-6a54-46d2-9f55-736686ba52d5_Floor3"
+    }
+   ]
+  },
+  "Shading_Control_ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "zone_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "shading_type": "InteriorShade",
+   "shading_control_type": "OnIfScheduleAllows",
+   "schedule_name": "Shading_Schedule",
+   "shading_control_is_scheduled": "Yes",
+   "shading_device_material_name": "Shading_Material",
+   "fenestration_surfaces": [
+    {
+     "fenestration_surface_name": "Window_UUID_ce8a33cb-21b2-47c2-a5c1-44bbb5143e6f"
+    },
+    {
+     "fenestration_surface_name": "Window_UUID_ac9fee9f-b3be-48d3-9e0e-16b3eeb9ccce"
+    },
+    {
+     "fenestration_surface_name": "Window_UUID_3d3241ad-6fb8-4876-bcf9-3221e6edb4dd"
+    },
+    {
+     "fenestration_surface_name": "Window_WallSurface_UUID_383af8b5-675c-4954-a741-467cf9c27e58_Floor1"
+    }
+   ]
+  }
+ },
+ "ZoneVentilation:WindandStackOpenArea": {
+  "Window_Ventilation_ID_00000000-0000-4000-8000-000000000000_Building_A_F2": {
+   "zone_or_space_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F2",
+   "opening_area": 22.336476727224298,
+   "opening_area_fraction_schedule_name": "Window_Open_Schedule",
+   "effective_angle": 0,
+   "discharge_coefficient_for_opening": 0.65,
+   "minimum_indoor_temperature": 22,
+   "maximum_indoor_temperature": 100,
+   "delta_temperature": -100,
+   "minimum_outdoor_temperature": 15,
+   "maximum_outdoor_temperature": 30,
+   "maximum_wind_speed": 40
+  },
+  "Window_Ventilation_ID_00000000-0000-4000-8000-000000000000_Building_A_F3": {
+   "zone_or_space_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F3",
+   "opening_area": 19.664721932392382,
+   "opening_area_fraction_schedule_name": "Window_Open_Schedule",
+   "effective_angle": 0,
+   "discharge_coefficient_for_opening": 0.65,
+   "minimum_indoor_temperature": 22,
+   "maximum_indoor_temperature": 100,
+   "delta_temperature": -100,
+   "minimum_outdoor_temperature": 15,
+   "maximum_outdoor_temperature": 30,
+   "maximum_wind_speed": 40
+  },
+  "Window_Ventilation_ID_00000000-0000-4000-8000-000000000000_Building_A_F1": {
+   "zone_or_space_name": "ID_00000000-0000-4000-8000-000000000000_Building_A_F1",
+   "opening_area": 13.88793241976053,
+   "opening_area_fraction_schedule_name": "Window_Open_Schedule",
+   "effective_angle": 0,
+   "discharge_coefficient_for_opening": 0.65,
+   "minimum_indoor_temperature": 22,
+   "maximum_indoor_temperature": 100,
+   "delta_temperature": -100,
+   "minimum_outdoor_temperature": 15,
+   "maximum_outdoor_temperature": 30,
+   "maximum_wind_speed": 40
+  }
+ }
+}

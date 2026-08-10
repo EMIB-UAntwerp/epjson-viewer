@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: epJSON Viewer
+message: "If you use this software, please cite it as below."
+type: software
+abstract: >-
+  A browser-based 3D geometry viewer for EnergyPlus epJSON files. Renders model
+  geometry directly from the simulation input, entirely client-side, with
+  EnergyPlus-exact coordinate handling, a building/zone/surface model tree and
+  interactive surface inspection.
+authors:
+  - family-names: Morales
+    given-names: Richard Dean
+    affiliation: "Energy and Materials in Infrastructure and Buildings (EMIB) Research Group, University of Antwerp"
+    email: richarddean.morales@uantwerpen.be
+license: Apache-2.0
+url: "https://paladean.github.io/epjson-viewer/"
+keywords:
+  - EnergyPlus
+  - epJSON
+  - building energy simulation
+  - urban building energy modelling
+  - 3D visualization
+  - building geometry
+version: "0.1.0"
+date-released: "2026-08-10"

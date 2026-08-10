@@ -1,0 +1,81 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Surface scale (near-black, slightly cool) */
+  --color-ink-950: #0a0a0c;
+  --color-ink-900: #101014;
+  --color-ink-850: #16161c;
+  --color-ink-800: #1d1d25;
+  --color-ink-700: #2a2a35;
+  --color-ink-600: #3f3f4d;
+  --color-ink-400: #7c7c8c;
+  --color-ink-300: #a3a3b2;
+  --color-ink-200: #c8c8d4;
+  --color-ink-100: #e6e6ee;
+
+  /* Single restrained accent */
+  --color-accent-300: #67e8f9;
+  --color-accent-400: #22d3ee;
+  --color-accent-500: #06b6d4;
+  --color-accent-600: #0891b2;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-ink-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Floating panel over the canvas */
+.glass {
+  background: color-mix(in srgb, var(--color-ink-900) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--color-ink-600) 45%, transparent);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+}
+
+/* Thin scrollbars matching the theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-700) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-ink-700);
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Interactive defaults */
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 1px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent-500) 35%, transparent);
+}
