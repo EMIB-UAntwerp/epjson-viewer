@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "6f2e40d10250a105b49966baa24d843711e61048",
+  "fromVersion": "9.6",
+  "toVersion": "22.1",
+  "rules": "CreateNewIDFUsingRulesV22_1_0",
+  "flangVersion": "21.1.8",
+  "compilerArchiveUrl": "https://github.com/miinso/flang-releases/releases/download/v21.1.8/flang%2Bllvm-21.1.8-x86_64-unknown-linux-gnu.tar.gz",
+  "compilerArchiveSha256": "673f4dc1e95d09b1253ca32078ae058540d68b533bdcbcbf72b7242fbed82dc6",
+  "compilerReleaseCommit": "caef954ca55e2650d1265c6850bf5864492e054e",
+  "emscriptenVersion": "6.0.0",
+  "buildRevision": 2,
+  "llvmSourceUrl": "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-21.1.8.tar.gz",
+  "llvmSourceSha256": "7ba3f2a8d8fda88be18a31d011e8195d3b7f87f9fa92b20c94cba2d7f65b0e3f",
+  "runtimeSha256": "d51d8c313dabd1a64a5f7a7950aefe2b4d54cd29b3f83397f07f5c104bab90c6"
+}

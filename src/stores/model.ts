@@ -4,6 +4,8 @@ import type { EpModel, EpSurface, GeometryBundle, Category } from '../core/types
 import { CATEGORIES } from '../core/types'
 import type { RenderMode } from '../three/materials'
 import type { WorkerRequest, WorkerResponse } from '../worker/modelWorker'
+import { ConversionError, convertIdf } from '../energyplus/client'
+import type { UpgradeProvenance } from '../energyplus/types'
 
 export type LoadStatus = 'empty' | 'loading' | 'ready' | 'error'
 export type ViewPreset = 'exterior' | 'all' | 'xray'
@@ -28,6 +30,12 @@ export const useModelStore = defineStore('model', () => {
   const fileName = ref('')
   const errorMsg = ref('')
   const progress = ref({ phase: '', pct: 0 })
+  const importFileName = ref('')
+  const conversionDiagnostics = shallowRef<string[]>([])
+  const upgradedDocument = shallowRef<{ name: string; text: string; provenance: UpgradeProvenance } | null>(null)
+  const convertedDocument = shallowRef<{ name: string; text: string; version: string } | null>(null)
+  // Preserve complete input independently of the recentered, geometry-only model.
+  const sourceDocument = shallowRef<{ name: string; original: string; epjson: string; upgradedIdf?: string; provenance?: UpgradeProvenance } | null>(null)
 
   const model = shallowRef<EpModel | null>(null)
   const bundle = shallowRef<GeometryBundle | null>(null)
@@ -146,6 +154,24 @@ export const useModelStore = defineStore('model', () => {
 
   let worker: Worker | null = null
   let requestId = 0
+  let controller: AbortController | null = null
+  let pendingDocument: typeof sourceDocument.value = null
+
+  function stopWork(): void {
+    controller?.abort()
+    controller = null
+    worker?.terminate()
+    worker = null
+    pendingDocument = null
+  }
+
+  function failLoad(id: number, error: unknown): void {
+    if (id !== requestId) return
+    errorMsg.value = error instanceof Error ? error.message : String(error)
+    if (error instanceof ConversionError) conversionDiagnostics.value = error.diagnostics
+    status.value = model.value ? 'ready' : 'error'
+    stopWork()
+  }
 
   function ensureWorker(): Worker {
     if (worker) return worker
@@ -154,8 +180,10 @@ export const useModelStore = defineStore('model', () => {
       const msg = e.data
       if (msg.id !== requestId) return // stale response from a superseded load
       if (msg.type === 'progress') {
-        progress.value = { phase: msg.phase, pct: msg.pct }
+        progress.value = { phase: msg.phase, pct: convertedDocument.value ? 40 + msg.pct * 0.6 : msg.pct }
       } else if (msg.type === 'done') {
+        sourceDocument.value = pendingDocument ? markRaw(pendingDocument) : null
+        fileName.value = importFileName.value
         model.value = markRaw(msg.model)
         bundle.value = markRaw(msg.bundle)
         selected.value = null
@@ -166,52 +194,137 @@ export const useModelStore = defineStore('model', () => {
           selectionLevel.value = 'surface'
         }
         status.value = 'ready'
+        stopWork()
       } else {
-        errorMsg.value = msg.message
-        status.value = 'error'
+        failLoad(msg.id, new Error(msg.message))
       }
     }
+    const workerId = requestId
     worker.onerror = (e) => {
-      errorMsg.value = e.message || 'Worker failed'
-      status.value = 'error'
+      failLoad(workerId, new Error(e.message || 'Worker failed'))
     }
+    worker.onmessageerror = () => failLoad(workerId, new Error('Could not read the geometry worker result.'))
     return worker
   }
 
-  async function loadFile(file: File): Promise<void> {
-    const text = await file.text()
-    loadText(file.name, text)
+  function beginLoad(name: string): number {
+    stopWork()
+    const id = ++requestId
+    controller = new AbortController()
+    status.value = 'loading'
+    importFileName.value = name
+    errorMsg.value = ''
+    conversionDiagnostics.value = []
+    convertedDocument.value = null
+    upgradedDocument.value = null
+    progress.value = { phase: 'Reading file', pct: 2 }
+    return id
   }
 
-  function loadText(name: string, text: string): void {
-    status.value = 'loading'
-    fileName.value = name
-    errorMsg.value = ''
-    progress.value = { phase: 'Reading file', pct: 5 }
-    selected.value = null
-    const req: WorkerRequest = { id: ++requestId, fileName: name, text }
+  async function processText(id: number, name: string, original: string): Promise<void> {
+    if (id !== requestId || !controller) return
+    let text = original
+    let upgradedIdf: string | undefined
+    let provenance: UpgradeProvenance | undefined
+    if (/\.idf$/i.test(name)) {
+      const result = await convertIdf(original, {
+        id,
+        signal: controller.signal,
+        assetBaseUrl: new URL(import.meta.env.BASE_URL + 'energyplus/', document.baseURI).href,
+        onProgress: (phase, pct) => {
+          if (id === requestId) progress.value = { phase, pct }
+        },
+      })
+      if (id !== requestId) return
+      text = result.epjson
+      upgradedIdf = result.upgradedIdf
+      provenance = result.provenance
+      conversionDiagnostics.value = result.diagnostics
+      upgradedDocument.value = result.upgradedIdf ? markRaw({
+        name: name.replace(/\.idf$/i, `-v${result.provenance.targetVersion}.idf`),
+        text: result.upgradedIdf, provenance: result.provenance,
+      }) : null
+      convertedDocument.value = markRaw({
+        name: name.replace(/\.idf$/i, '.epJSON'), text, version: result.energyPlusVersion,
+      })
+    }
+    if (id !== requestId) return
+    pendingDocument = { name, original, epjson: text, upgradedIdf, provenance }
+    const req: WorkerRequest = { id, fileName: name, text }
     ensureWorker().postMessage(req)
   }
 
-  async function loadDemo(url: string, name: string): Promise<void> {
-    status.value = 'loading'
-    progress.value = { phase: 'Downloading demo model', pct: 2 }
+  async function loadFile(file: File): Promise<void> {
+    const id = beginLoad(file.name)
     try {
-      const res = await fetch(url)
-      if (!res.ok) throw new Error(`Demo model not found (${res.status})`)
-      loadText(name, await res.text())
-    } catch (err) {
-      errorMsg.value = err instanceof Error ? err.message : String(err)
-      status.value = 'error'
+      await processText(id, file.name, await file.text())
+    } catch (error) {
+      failLoad(id, error)
     }
   }
 
+  async function loadText(name: string, text: string): Promise<void> {
+    const id = beginLoad(name)
+    try {
+      await processText(id, name, text)
+    } catch (error) {
+      failLoad(id, error)
+    }
+  }
+
+  async function loadDemo(url: string, name: string): Promise<void> {
+    const id = beginLoad(name)
+    progress.value = { phase: 'Downloading demo model', pct: 2 }
+    try {
+      const res = await fetch(url, { signal: controller!.signal })
+      if (!res.ok) throw new Error(`Demo model not found (${res.status})`)
+      await processText(id, name, await res.text())
+    } catch (err) {
+      failLoad(id, err)
+    }
+  }
+
+  function cancelLoad(): void {
+    ++requestId
+    stopWork()
+    errorMsg.value = ''
+    conversionDiagnostics.value = []
+    convertedDocument.value = null
+    upgradedDocument.value = null
+    status.value = model.value ? 'ready' : 'empty'
+  }
+
+  function downloadUpgraded(): void {
+    const upgraded = upgradedDocument.value
+    if (!upgraded) return
+    const url = URL.createObjectURL(new Blob([upgraded.text], { type: 'text/plain' }))
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = upgraded.name
+    anchor.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
+  function downloadConverted(): void {
+    const converted = convertedDocument.value
+    if (!converted) return
+    const url = URL.createObjectURL(new Blob([converted.text], { type: 'application/json' }))
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = converted.name
+    anchor.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
   function close(): void {
+    cancelLoad()
     model.value = null
     bundle.value = null
     selected.value = null
     hiddenZones.value = new Set()
     fileName.value = ''
+    importFileName.value = ''
+    sourceDocument.value = null
     status.value = 'empty'
   }
 
@@ -334,6 +447,11 @@ export const useModelStore = defineStore('model', () => {
     fileName,
     errorMsg,
     progress,
+    importFileName,
+    conversionDiagnostics,
+    convertedDocument,
+    upgradedDocument,
+    sourceDocument,
     model,
     bundle,
     selected,
@@ -357,6 +475,9 @@ export const useModelStore = defineStore('model', () => {
     loadFile,
     loadText,
     loadDemo,
+    cancelLoad,
+    downloadConverted,
+    downloadUpgraded,
     close,
     select,
     selectByName,

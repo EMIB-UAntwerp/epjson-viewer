@@ -1,0 +1,42 @@
+name: Build EnergyPlus browser runtime
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Read pinned toolchain
+        id: config
+        run: node -e "const c=require('./scripts/energyplus/build-config.json');require('fs').appendFileSync(process.env.GITHUB_OUTPUT,'emscripten='+c.emscriptenVersion+'\n')"
+      - uses: actions/checkout@v4
+        with:
+          repository: emscripten-core/emsdk
+          ref: ${{ steps.config.outputs.emscripten }}
+          path: .energyplus-build/emsdk
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Build pinned upstream runtime
+        shell: bash
+        run: |
+          cd .energyplus-build/emsdk
+          ./emsdk install '${{ steps.config.outputs.emscripten }}'
+          ./emsdk activate '${{ steps.config.outputs.emscripten }}'
+          source ./emsdk_env.sh
+          cd ../..
+          npm run energyplus:build
+      - name: Upload candidate runtime for validation
+        uses: actions/upload-artifact@v4
+        with:
+          name: energyplus-browser-candidate
+          path: .energyplus-build/candidate/
+          if-no-files-found: error

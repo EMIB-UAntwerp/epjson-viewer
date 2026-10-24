@@ -95,7 +95,7 @@ function onFilePicked(e: Event): void {
     <!-- Actions -->
     <button
       class="flex items-center gap-1.5 rounded-md border border-ink-700 bg-ink-850 px-2.5 py-1.5 text-xs text-ink-200 transition-colors duration-150 hover:border-ink-600 hover:bg-ink-800"
-      title="Open another epJSON file"
+      title="Open an IDF or epJSON file"
       @click="fileInput?.click()"
     >
       <Upload class="h-3.5 w-3.5" /> Open
@@ -200,6 +200,6 @@ function onFilePicked(e: Event): void {
       </div>
     </div>
 
-    <input ref="fileInput" type="file" accept=".epJSON,.epjson,.json" class="hidden" @change="onFilePicked" />
+    <input ref="fileInput" type="file" accept=".idf,.IDF,.epJSON,.epjson,.json" class="hidden" @change="onFilePicked" />
   </header>
 </template>

@@ -14,6 +14,12 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview",
+    "energyplus:build": "node scripts/energyplus/build.mjs",
+    "energyplus:build-flang": "node scripts/energyplus/build-flang.mjs",
+    "energyplus:build-transition": "node scripts/energyplus/build-transition.mjs",
+    "energyplus:package-transition": "node scripts/energyplus/package-transition.mjs",
+    "energyplus:prepare": "node scripts/energyplus/prepare.mjs",
+    "energyplus:install": "node scripts/energyplus/install.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

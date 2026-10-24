@@ -74,7 +74,8 @@ The layer boundaries are load-bearing, not stylistic:
   `SceneManager` instance. Other components reach the scene through the store.
 - **`src/components/**` import three.js only via `materials.ts`**, and only for
   palette colors.
-- **`src/stores/model.ts` is the single store** and the only owner of the Worker.
+- **`src/stores/model.ts` is the single store** and owns import jobs, the geometry
+  Worker, and the abort controller for the EnergyPlus conversion client.
   Panels talk to it directly — there is no props drilling and no cross-panel
   emit chain.
 
@@ -82,7 +83,9 @@ The layer boundaries are load-bearing, not stylistic:
 
 ```
 file drop / picker / demo fetch
-  → store.loadFile → store.loadText → Worker
+  → store.loadFile / store.loadText / store.loadDemo
+  → IDF only: EnergyPlus client → isolated WASM worker → declared native upgrades → target conversion → complete epJSON
+  → geometry Worker
       → JSON.parse → parseEpjson → buildGeometry → transfer
   → store: markRaw(model), markRaw(bundle), status = 'ready'
   → ViewerCanvas.initModel → SceneManager.setModel → applyColors
@@ -92,11 +95,15 @@ file drop / picker / demo fetch
 
 Step by step:
 
-1. **Load.** `DropZone`, `TopBar`, or `App.vue`'s global drop handler calls
-   `store.loadFile(file)` → `file.text()` → `store.loadText(name, text)`. The
-   demo buttons go through `store.loadDemo(url, name)` → `fetch` → `loadText`.
-2. **Dispatch.** `loadText` sets `status = 'loading'`, increments `requestId`,
-   and posts a `WorkerRequest` to the module Worker created in `ensureWorker()`.
+1. **Load.** File selection, direct text input and demo fetch each start a job
+   before asynchronous reading. Starting another job or closing the model aborts
+   conversion/fetch, terminates geometry work and invalidates stale responses.
+2. **Convert and dispatch.** IDFs go through `src/energyplus/client.ts`, which
+   creates a separate worker, resolves declared native transition edges and the
+   target converter, and returns epJSON, upgraded IDF and build provenance.
+   Protocol-1 converter registries remain compatible with worker protocol 2. The store posts epJSON to the existing geometry
+   worker contract. Full source documents are retained outside `EpModel` for
+   download and future simulation. See `docs/energyplus.md` for artifact status.
 3. **Worker** (`modelWorker.ts`) runs `JSON.parse` (10%) → `parseEpjson` (35%)
    → `buildGeometry` (60%) → transfer (90%), appending build warnings to
    `model.warnings`, then posts `{type: 'done', model, bundle}` with the
@@ -105,7 +112,10 @@ Step by step:
    — that is the staleness guard for a superseded load. Otherwise it stores
    `markRaw(msg.model)` / `markRaw(msg.bundle)`, clears `selected` and
    `hiddenZones`, and flips `status` to `'ready'`.
-5. **Render.** `App.vue` swaps `DropZone` for the ready layout, `ViewerCanvas`
+5. **Render.** `App.vue` shows the viewer whenever a model and bundle exist, so
+   a pending, cancelled or failed replacement keeps the current scene visible.
+   `ImportStatus` shows progress, cancellation, conversion diagnostics and the
+   epJSON/upgraded-IDF downloads. On successful loading, `ViewerCanvas`
    mounts (or its `watch([model, bundle])` fires) and calls `initModel()`, which
    pushes every store field into the imperative scene and finishes with
    `fitAll()`.
@@ -326,8 +336,9 @@ One setup-style Pinia store, `useModelStore`. The rules that matter:
   This keeps imperative camera moves out of the component tree.
 - **`categoryVisible` is a plain `reactive` record** keyed by `Category` — it is
   small and benefits from deep reactivity.
-- The store owns the Worker (`ensureWorker`) and the `requestId` staleness
-  guard. No component creates a Worker.
+- The store owns the geometry Worker (`ensureWorker`), conversion job abort
+  controller and `requestId` staleness guard. The conversion client creates an
+  isolated native worker per job. No component creates a Worker.
 - `setHiddenZones` re-anchors the selection: a group selection survives while
   any member is still visible, and only clears when all of them are hidden.
 

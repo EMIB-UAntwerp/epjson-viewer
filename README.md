@@ -39,7 +39,17 @@ simulation input, entirely in the browser. **Files never leave your machine.**
 ## Usage
 
 Open the deployed page and drop an `.epJSON` file, or try the bundled
-anonymized demo models. Convert IDF to epJSON with:
+anonymized demo models. IDF imports use separately installed EnergyPlus
+WebAssembly runtimes. When a validated upgrade chain is installed, older IDFs
+pass through upstream transitions before target-version conversion. The viewer
+offers the resulting epJSON and upgraded IDF for download. No simulation is run.
+
+**Public runtime delivery is pending:** EnergyPlus 26.1 conversion is built and
+validated locally, with the 9.6 → 26.1 upgrade chain installed for manual acceptance.
+No downloadable release is currently pinned.
+See [browser conversion setup and upgrades](docs/energyplus.md) for build,
+installation and validation status. Without runtime assets, IDF import reports
+that conversion is unavailable. Native conversion remains available with:
 
 ```sh
 energyplus --convert-only model.idf
@@ -58,6 +68,7 @@ energyplus --convert-only model.idf
 ```
 src/core/     epJSON parsing, transforms, triangulation, buffers — pure TS, no DOM
 src/worker/   Web Worker wrapping the core pipeline
+src/energyplus/  versioned EnergyPlus WASM conversion adapter and isolated worker
 src/three/    SceneManager (camera, picking, highlights), materials/palettes
 src/stores/   Pinia store (load status, selection, visibility, render mode)
 src/components/  Vue 3 UI (tree, layers, selection card, overlays)

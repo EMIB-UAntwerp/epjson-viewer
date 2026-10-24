@@ -1,6 +1,8 @@
 # Dependencies / build
 node_modules/
 dist/
+.energyplus-build/
+public/energyplus/
 *.tsbuildinfo
 
 # Research data — contains real addresses, never commit
