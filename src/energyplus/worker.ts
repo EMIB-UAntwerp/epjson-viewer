@@ -98,6 +98,7 @@ self.onmessage = async (event: MessageEvent<EngineRequest>) => {
     const manifest = await readJson(manifestUrl) as EngineManifest
     if (!manifest || manifest.protocol !== 1 || typeof manifest.energyPlusVersion !== 'string' || !manifest.capabilities?.includes('convert') ||
         typeof manifest.buildId !== 'string' || typeof manifest.sourceCommit !== 'string' ||
+        (manifest.invocation !== undefined && manifest.invocation !== 'convert-input-format') ||
         manifest.energyPlusVersion.split('.').slice(0, 2).join('.') !== targetVersion) {
       throw new Error('The EnergyPlus engine and model versions do not match.')
     }
@@ -175,7 +176,10 @@ self.onmessage = async (event: MessageEvent<EngineRequest>) => {
     runtime.FS.mkdir('/job')
     runtime.FS.chdir('/job')
     runtime.FS.writeFile('input.idf', input)
-    const exitCode = invoke(runtime, ['--convert-only', '-d', '/job/', '/job/input.idf'])
+    // The standalone format utility preserves HVAC templates; the engine CLI rejects them.
+    const exitCode = invoke(runtime, manifest.invocation === 'convert-input-format'
+      ? ['--format', 'epjson', '--output', '/job/', '/job/input.idf']
+      : ['--convert-only', '-d', '/job/', '/job/input.idf'])
     for (const name of runtime.FS.readdir('/job').filter((name) => name.endsWith('.err'))) {
       for (const line of runtime.FS.readFile(`/job/${name}`, { encoding: 'utf8' }).split('\n')) log(line)
     }

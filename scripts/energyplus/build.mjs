@@ -10,6 +10,8 @@ const root = resolve(here, '../..')
 const workspace = join(root, '.energyplus-build', `${config.energyPlusVersion}-${config.buildRevision}`)
 const source = join(workspace, 'source')
 const build = join(workspace, 'build')
+const formatConverter = process.argv.includes('--format-converter')
+const target = formatConverter ? 'ConvertInputFormat' : 'energyplus'
 
 function run(command, args, cwd = root, capture = false) {
   const result = spawnSync(command, args, { cwd, encoding: 'utf8', stdio: ['ignore', capture ? 'pipe' : 'inherit', 'inherit'] })
@@ -63,21 +65,21 @@ run('emcmake', ['cmake', '-S', source, '-B', build, '-G', 'Ninja',
   // cstdint supplies fixed-width types used by upstream SSC with recent Clang.
   '-DCMAKE_CXX_FLAGS=-fwasm-exceptions -include cstdint', '-DCMAKE_C_FLAGS=-fwasm-exceptions',
 ])
-run('cmake', ['--build', build, '--target', 'energyplus', '--parallel', process.env.EPLUS_BUILD_JOBS || '2'])
+run('cmake', ['--build', build, '--target', target, '--parallel', process.env.EPLUS_BUILD_JOBS || '2'])
 
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex')
 const recipeHash = digest(Buffer.concat([
   await readFile(fileURLToPath(import.meta.url)), await readFile(join(here, 'browser.cmake')),
   await readFile(join(here, 'build-config.json')),
 ]))
-const loaderBytes = await readFile(join(build, 'browser/energyplus.mjs'))
-const wasmBytes = await readFile(join(build, 'browser/energyplus.wasm'))
+const loaderBytes = await readFile(join(build, `browser/${target}.mjs`))
+const wasmBytes = await readFile(join(build, `browser/${target}.wasm`))
 const buildId = `${config.energyPlusVersion}-${digest(Buffer.concat([loaderBytes, wasmBytes])).slice(0, 16)}`
 const artifactRoot = join(root, '.energyplus-build/candidate')
 const output = join(artifactRoot, buildId)
 await mkdir(output, { recursive: true })
 const assets = {}
-for (const [key, file, bytes] of [['loader', 'energyplus.mjs', loaderBytes], ['wasm', 'energyplus.wasm', wasmBytes]]) {
+for (const [key, file, bytes] of [['loader', `${target}.mjs`, loaderBytes], ['wasm', `${target}.wasm`, wasmBytes]]) {
   await writeFile(join(output, file), bytes)
   assets[key] = { file, sha256: digest(bytes) }
 }
@@ -98,6 +100,7 @@ async function copyNotices(directory, relative = '') {
 await copyNotices(join(source, 'third_party'))
 await writeFile(join(output, 'manifest.json'), JSON.stringify({
   protocol: 1, energyPlusVersion: config.energyPlusVersion, sourceCommit: commit,
+  ...(formatConverter ? { invocation: 'convert-input-format' } : {}),
   sourceRef: config.ref, emscriptenVersion: config.emscriptenVersion,
   recipeHash, buildId, capabilities: ['convert'], ...assets,
 }, null, 2) + '\n')

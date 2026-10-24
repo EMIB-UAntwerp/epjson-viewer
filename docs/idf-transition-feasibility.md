@@ -13,10 +13,61 @@ Evidence: `.energyplus-build/transition/chain-parity/` (the earlier first proof
 is retained in `browser-parity/append-repair/`).
 These models do not establish coverage of every changed migration rule.
 
-The working 26.1 converter is unchanged. All nine transitions are installed
-locally with a protocol-2 registry targeting 26.1. The worker preserves upgraded
+The original 26.1 converter is retained; the subsequent HVAC-template correction
+adds upstream `ConvertInputFormat` (see `docs/energyplus.md`). All sixteen transitions from 8.9 are
+installed locally with a protocol-2 registry targeting 26.1. The worker preserves upgraded
 IDF and provenance and exposes both IDF/epJSON downloads. The geometry worker
-contract remains unchanged. Nothing has been published, committed or pushed.
+contract remains unchanged. This extension does not publish artifacts or
+commit/push changes.
+
+## Validated extension to 8.9
+
+The build adapter now permits the explicit prefix
+`8.9 → 9.0 → 9.1 → 9.2 → 9.3 → 9.4 → 9.5 → 9.6`.
+All seven unchanged upstream programs link with `--fatal-warnings` and empty
+link diagnostics, using the existing patched Flang toolchain. The converter,
+previous nine transitions, worker protocol and geometry pipeline are unchanged.
+
+Native references use the shipped 26.1 transition executables for 9.0 onward.
+The distribution does not include 8.9 → 9.0, so that native reference was built
+with gfortran from the same pinned, unmodified EnergyPlus source files. Its
+compiler version, commands and source commit are recorded in
+`.energyplus-build/transition/legacy/native-build/build-evidence.json`.
+
+Official upstream models:
+
+- `v8.9.0/testfiles/1ZoneUncontrolled.idf` (53 objects).
+- `v8.9.0/testfiles/5ZoneAirCooled.idf` (357 objects).
+- `v9.4.0/testfiles/5ZoneAirCooled.idf` for the independent 9.4 entry point.
+
+Original download URLs and SHA-256 hashes are in `legacy/inputs/sources.json`.
+All three native chains reach 26.1 and convert successfully to epJSON. Chromium
+passes all seven new edges on both 8.9 models (14 comparisons), and Firefox
+passes all seven on the single-zone model. Comparisons use matching native
+intermediate inputs. Every semantic and audit comparison passes.
+
+Complete production UI runs under `/viewer/` start with the original 8.9
+single-zone and original 9.4 HVAC files. Both render without page errors; both
+upgraded-IDF and epJSON downloads match the corresponding native 26.1 outputs.
+Cancellation followed by retry retains the previous model, and 8.8 is rejected
+without replacing the displayed scene. The 16-edge registry is installed locally.
+The 35 existing focused checks, production build/typecheck and final urban-block
+render with picking pass. The render check reports no page errors.
+
+The full UI acceptance runs took about 430 seconds (8.9, including cancel/retry)
+and 582 seconds (9.4 HVAC) while other validation was running. These are local
+observations, not performance guarantees. A full Firefox UI chain and
+vendor-specific DesignBuilder exports remain unverified.
+
+The HVAC model exercises changes to Boiler:HotWater, FenestrationSurface:Detailed,
+RunPeriod, ZoneHVAC:EquipmentList, GlobalGeometryRules, Sizing:Zone, output/meter
+objects, SimulationControl, AirLoopHVAC:OutdoorAirSystem and
+BuildingSurface:Detailed. This does not establish every migration rule or
+vendor-specific export extension. No DesignBuilder project files were supplied.
+
+Evidence is under `.energyplus-build/transition/legacy/`: `build-summary.json`,
+`native-chain/`, `browser-parity/`, `ui-acceptance/` and `candidate/`.
+The original installed registry is preserved as `registry-before.json`.
 
 ## Demonstrated native behavior
 
@@ -197,7 +248,7 @@ Expected current result: compilation succeeds, strict linking fails on the
 signatures above, process exits nonzero. Even a future successful link is
 labelled `compiled-unvalidated`; it does not emit a deployable manifest.
 
-## Chain implementation and validation
+## Initial 9.6 → 26.1 implementation and validation
 
 All nine adjacent transitions through 26.1 compile and link with
 `--fatal-warnings` and optimized Emscripten linking; all nine link diagnostics

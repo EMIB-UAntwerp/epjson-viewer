@@ -10,7 +10,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const configBytes = await readFile(join(here, 'transition-config.json'))
 const config = JSON.parse(configBytes)
 const [sourceArg, flangArg, fromArg, toArg] = process.argv.slice(2)
-const versions = ['9.6', '22.1', '22.2', '23.1', '23.2', '24.1', '24.2', '25.1', '25.2', '26.1']
+const versions = ['8.9', '9.0', '9.1', '9.2', '9.3', '9.4', '9.5', '9.6', '22.1', '22.2', '23.1', '23.2', '24.1', '24.2', '25.1', '25.2', '26.1']
 if (fromArg || toArg) {
   const index = versions.indexOf(fromArg)
   if (index < 0 || versions[index + 1] !== toArg) throw new Error('Unsupported transition edge')

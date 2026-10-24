@@ -43,16 +43,17 @@ anonymized demo models. IDF imports use separately installed EnergyPlus
 WebAssembly runtimes. When a validated upgrade chain is installed, older IDFs
 pass through upstream transitions before target-version conversion. The viewer
 offers the resulting epJSON and upgraded IDF for download. No simulation is run.
+The current format converter preserves HVAC templates without expanding them.
 
 **Public runtime delivery is pending:** EnergyPlus 26.1 conversion is built and
-validated locally, with the 9.6 → 26.1 upgrade chain installed for manual acceptance.
+validated locally, with the 8.9 → 26.1 upgrade chain installed for manual acceptance.
 No downloadable release is currently pinned.
 See [browser conversion setup and upgrades](docs/energyplus.md) for build,
 installation and validation status. Without runtime assets, IDF import reports
 that conversion is unavailable. Native conversion remains available with:
 
 ```sh
-energyplus --convert-only model.idf
+ConvertInputFormat --format epjson model.idf
 ```
 
 | Action | Control |

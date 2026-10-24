@@ -2,9 +2,11 @@
 
 ## Current delivery status
 
-EnergyPlus 26.1.0 has been compiled with Emscripten 6.0.0 and installed locally.
-Candidate `26.1.0-df6b27a725d576fc` converts IDFs in the browser using upstream
-conversion code. Its WASM download is 31.3 MB before HTTP compression.
+EnergyPlus 26.1.0 has been compiled with Emscripten 6.0.0 and installed locally. The format-conversion
+candidate `26.1.0-360096b1fc5a6c8d` uses upstream `ConvertInputFormat`, including
+HVAC-template preservation. Its WASM download is 5.9 MB before HTTP compression.
+The earlier engine CLI candidate `26.1.0-df6b27a725d576fc` is retained for rollback;
+it rejects unexpanded HVAC templates and its WASM download is 31.3 MB.
 
 No public release is pinned in `scripts/energyplus/release.json` yet. Generated
 artifacts are ignored by Git: a fresh checkout or deployment needs the build
@@ -12,7 +14,52 @@ and installation steps below, or a published release pin. Without installed
 assets, IDF import reports that conversion is unavailable. epJSON import is
 independent of these assets.
 
-### Local validation (2026-10-22)
+### HVAC-template compatibility (2026-10-24)
+
+`energyplus --convert-only` rejects unexpanded `HVACTemplate:*` objects even
+when their version is correct. Upstream `ConvertInputFormat` supports these
+objects by default and preserves them in epJSON. The browser build now offers
+this utility with `--format-converter`; the CI candidate workflow uses that
+option. Omitting it still builds the legacy engine. No simulation or template
+expansion is performed, and upstream conversion and transition sources remain
+unchanged.
+
+- Chromium and Firefox output matches native `ConvertInputFormat` for official
+  `HVACTemplate-5ZonePurchAir`, `HVACTemplate-5ZonePackagedVAV`, `5ZoneAirCooled`
+  and `HospitalLowEnergy` inputs. Both template families remain in the output.
+- Chromium UI imports/rendering and epJSON downloads pass. Invalid templates
+  produce errors while retaining the previous canvas. An original 25.2 template
+  model upgrades to 26.1 and renders; both downloads match native output.
+- The legacy engine manifest still executes successfully in both browsers.
+  All 82 previous converter/transition assets retain their checksums, and all
+  sixteen transition edges are unchanged.
+- Firefox conversion and UI downloads pass. Rendering could not be validated
+  in this headless environment: WebGL2 context creation is disabled, and even
+  directly importing the native reference epJSON produces no canvas.
+- Existing 35 focused checks, production build/typecheck and Chromium urban-block
+  render/picking pass. Existing compiler and Vite chunk-size warnings remain
+  visible. New regression tests: not written; awaiting manual acceptance.
+
+The reported `Building_Two_LoWD4.idf` was unavailable locally; the reproduced
+failure and correction use upstream template models. Upgrade runtime performance
+has not been changed. Evidence, screenshots and native outputs are under
+`.energyplus-build/template-compatibility/`; the new converter also includes
+an asset-bound `validation.json` receipt.
+
+The current combined candidate includes the new converter, the previous engine
+for rollback and all sixteen validated transitions:
+
+```sh
+npm run energyplus:install -- .energyplus-build/template-compatibility/candidate
+```
+
+Archive: `.energyplus-build/energyplus-browser-upgrades-8.9-to-26.1-templates.tar.gz`.
+SHA-256: `06db043a17a2c0ff73f73aecc7a608fd18762af2ec30a8e4de3baa60d3641f1b`.
+The prior registry is `.energyplus-build/template-compatibility/registry-before.json`;
+the previous full candidate remains `.energyplus-build/transition/legacy/candidate`.
+Nothing from this correction has been published, committed or pushed.
+
+### Original engine CLI validation (2026-10-22)
 
 - Downloaded browser epJSON matched native EnergyPlus 26.1.0 JSON values for
   upstream `1ZoneUncontrolled.idf`, `5ZoneAirCooled.idf`, and
@@ -45,7 +92,10 @@ The worker reads the IDF Version object, resolves an explicit upgrade path from
 a protocol-2 registry (or accepts the original protocol-1 converter registry),
 then selects the target engine from `registry.json`,
 verifies the loader and WASM checksums, loads the modular Emscripten runtime,
-and runs the upstream CLI with `--convert-only`. Its filesystem contains only
+and runs upstream `ConvertInputFormat --format epjson --output /job/` when the
+manifest declares `invocation: "convert-input-format"`. Older manifests omit
+that field and retain the `energyplus --convert-only` invocation. Unknown
+invocations are rejected by the worker and installer. Its filesystem contains only
 that job's input and outputs. All model data stays in the browser.
 
 Only complete successful converter output is passed to the existing epJSON
@@ -57,37 +107,53 @@ fails or is cancelled and offers converted epJSON even if geometry loading fails
 Native conversion is stricter than the viewer's lenient epJSON parser. It does
 not itself upgrade old IDFs. Installed upstream transitions perform upgrades
 before conversion. Neither path runs simulations or macro/template preprocessors.
-Models requiring preprocessing must be prepared with the matching native tools.
+The format utility preserves `HVACTemplate:*` objects without expansion; the
+older engine CLI rejects them even with `--convert-only`. Other dependencies
+requiring preprocessing must be prepared with the matching native tools.
 Missing, duplicate, or unsupported Version objects receive an import error.
 
 ## Transition candidates (2026-10-24)
 
 The compiler/runtime ABI repairs and browser/native evidence are documented in
-[idf-transition-feasibility.md](idf-transition-feasibility.md). Nine strict-link
-candidates cover the explicit 9.6 → 22.1 → 22.2 → 23.1 → 23.2 → 24.1 → 24.2 →
-25.1 → 25.2 → 26.1 chain. All nine steps have Chromium/native parity on two
-official models and Firefox/native parity on the simple model. The chain is
-installed locally; the complete Chromium UI flow and both downloads match
-native output. User visual acceptance remains pending.
+[idf-transition-feasibility.md](idf-transition-feasibility.md). Sixteen validated
+upstream transitions now cover this explicit chain:
 
-The local delivery archive is
-`.energyplus-build/energyplus-browser-upgrades-26.1.tar.gz`, SHA-256
-`258e91d8c62cf3571e93c896cf5c201b87187d07421174ed2c05704c6969664c`.
-It includes the unchanged converter, all nine transitions and their validation
-receipts. It has not been published or pinned for deployment. Reinstall locally:
-
-```sh
-npm run energyplus:install -- .energyplus-build/transition/validated-candidate
+```text
+8.9 → 9.0 → 9.1 → 9.2 → 9.3 → 9.4 → 9.5 → 9.6
+    → 22.1 → 22.2 → 23.1 → 23.2 → 24.1 → 24.2 → 25.1 → 25.2 → 26.1
 ```
 
-The original converter-only candidate and registry backup remain available for
-rollback. Do not run `energyplus:prepare` with the current null release pin;
-that intentionally installs an empty registry.
+Each listed source version starts at its own position in the chain; 26.1 converts
+directly. Older-than-8.9 and newer-than-26.1 input is rejected. Source versions
+not listed above have no installed path.
 
-Build an adjacent edge with the isolated patched toolchain:
+The seven added edges have native semantic/audit parity on two official 8.9
+models in Chromium and the single-zone model in Firefox. Full Chromium UI runs
+from original 8.9 and 9.4 files produce native-matching upgraded IDF and epJSON
+downloads and render without page errors. The existing nine transitions and
+converter remain byte-for-byte unchanged. User visual acceptance is pending.
+
+The previous extension archive (using the legacy engine converter) is
+`.energyplus-build/energyplus-browser-upgrades-8.9-to-26.1.tar.gz`, SHA-256
+`6e062f8a57bce665aa63f0f4e7a3f9d30783d136c58df5c18cf040583243c40e`.
+It includes the unchanged converter, all sixteen transitions and their validation
+receipts. It has not been published or pinned for deployment. Roll back locally:
 
 ```sh
-npm run energyplus:build-transition -- <EnergyPlus-source> <Flang-install> 22.1 22.2
+npm run energyplus:install -- .energyplus-build/transition/legacy/candidate
+```
+
+The previous 9.6-floor candidate remains at
+`.energyplus-build/transition/validated-candidate` with its original archive for
+rollback. The registry before this extension is preserved in
+`.energyplus-build/transition/legacy/registry-before.json`. Do not run
+`energyplus:prepare` with the current null release pin; that intentionally
+installs an empty registry.
+
+Build and package an adjacent edge with the isolated patched toolchain:
+
+```sh
+npm run energyplus:build-transition -- <EnergyPlus-source> <Flang-install> 8.9 9.0
 npm run energyplus:package-transition -- <build-directory> <EnergyPlus-source> <LLVM-source> <candidate-directory>
 ```
 
@@ -113,7 +179,7 @@ Use Node 22, CMake, Ninja, Python and the Emscripten version pinned in
 shell, then run:
 
 ```sh
-npm run energyplus:build
+npm run energyplus:build -- --format-converter
 npm run energyplus:install -- .energyplus-build/candidate
 npm run dev -- --port 5199
 ```
@@ -141,7 +207,8 @@ in a published artifact; any public sample must follow `scripts/anonymize.py`.
 ## Validation and promotion
 
 Before promoting a candidate, compare its converted epJSON and diagnostics with
-native `energyplus --convert-only` from exactly the same release. Compare JSON
+native `ConvertInputFormat` from exactly the same release (or
+`energyplus --convert-only` for the legacy engine candidate). Compare JSON
 values rather than formatting or object-key order. Confirm malformed inputs,
 repeat imports, cancellation, unsupported versions, and preservation of the
 displayed model. Measure cold loading, memory use and conversion time on a

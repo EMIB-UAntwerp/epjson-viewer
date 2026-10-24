@@ -9,6 +9,7 @@ export interface EngineManifest {
   sourceCommit: string
   buildId: string
   capabilities: ['convert']
+  invocation?: 'convert-input-format'
   loader: EngineAsset
   wasm: EngineAsset
 }

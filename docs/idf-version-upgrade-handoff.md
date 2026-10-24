@@ -12,6 +12,19 @@ implemented and installed locally. The full Chromium UI flow and both downloads
 match native output. User visual acceptance and public artifact delivery remain
 pending; see the feasibility document for validation limits.
 
+The subsequent extension adds 8.9 and every 9.x release through 9.5, using seven
+more unchanged upstream transitions. All seven pass Chromium/native parity on
+two official 8.9 models and Firefox/native parity on the single-zone model.
+Complete 8.9 and 9.4 UI imports/downloads match native 26.1 output. The local
+registry now contains sixteen edges. See the feasibility document's extension
+section and `docs/energyplus.md` for the new archive and rollback location.
+
+The HVAC-template compatibility correction adds upstream `ConvertInputFormat`
+as a converter invocation, preserving templates in epJSON without expansion.
+The original engine CLI assets remain usable; transition rules and the worker
+message contract are unchanged. See `docs/energyplus.md` for current candidate
+installation and validation evidence.
+
 ## Objective and authorization
 
 The user wants older IDFs, including version 9.6, to load automatically and

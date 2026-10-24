@@ -18,19 +18,21 @@ if(TARGET generate_embeddable_epJSON_schema)
     "-sALLOW_MEMORY_GROWTH=1")
 endif()
 
-set_target_properties(energyplus PROPERTIES
-  OUTPUT_NAME "energyplus" SUFFIX ".mjs" VERSION ""
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/browser")
-target_link_options(energyplus PRIVATE
-  -fwasm-exceptions
-  "-sMODULARIZE=1"
-  "-sEXPORT_ES6=1"
-  "-sEXPORT_NAME=createEnergyPlus"
-  "-sENVIRONMENT=worker,node"
-  "-sINVOKE_RUN=0"
-  "-sEXIT_RUNTIME=0"
-  "-sALLOW_MEMORY_GROWTH=1"
-  "-sMAXIMUM_MEMORY=2147483648"
-  "-sSTACK_SIZE=5242880"
-  "-sFORCE_FILESYSTEM=1"
-  "-sEXPORTED_RUNTIME_METHODS=['FS','callMain']")
+foreach(converter IN ITEMS energyplus ConvertInputFormat)
+  set_target_properties(${converter} PROPERTIES
+    OUTPUT_NAME "${converter}" SUFFIX ".mjs" VERSION ""
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/browser")
+  target_link_options(${converter} PRIVATE
+    -fwasm-exceptions
+    "-sMODULARIZE=1"
+    "-sEXPORT_ES6=1"
+    "-sEXPORT_NAME=createEnergyPlus"
+    "-sENVIRONMENT=worker,node"
+    "-sINVOKE_RUN=0"
+    "-sEXIT_RUNTIME=0"
+    "-sALLOW_MEMORY_GROWTH=1"
+    "-sMAXIMUM_MEMORY=2147483648"
+    "-sSTACK_SIZE=5242880"
+    "-sFORCE_FILESYSTEM=1"
+    "-sEXPORTED_RUNTIME_METHODS=['FS','callMain']")
+endforeach()

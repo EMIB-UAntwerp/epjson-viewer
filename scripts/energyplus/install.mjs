@@ -20,6 +20,7 @@ for (const entry of registry.engines) {
   const base = dirname(manifestPath)
   const manifest = JSON.parse(await readFile(join(source, manifestPath), 'utf8'))
   if (manifest.protocol !== 1 || !manifest.capabilities?.includes('convert') ||
+      (manifest.invocation !== undefined && manifest.invocation !== 'convert-input-format') ||
       manifest.energyPlusVersion.split('.').slice(0, 2).join('.') !== entry.modelVersion) throw new Error('Incompatible engine manifest')
   for (const asset of [manifest.loader, manifest.wasm]) {
     const bytes = await readFile(join(source, base, safePath(asset.file)))

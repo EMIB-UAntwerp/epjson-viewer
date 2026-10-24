@@ -33,7 +33,7 @@ jobs:
           ./emsdk activate '${{ steps.config.outputs.emscripten }}'
           source ./emsdk_env.sh
           cd ../..
-          npm run energyplus:build
+          npm run energyplus:build -- --format-converter
       - name: Upload candidate runtime for validation
         uses: actions/upload-artifact@v4
         with:

@@ -101,6 +101,8 @@ Step by step:
 2. **Convert and dispatch.** IDFs go through `src/energyplus/client.ts`, which
    creates a separate worker, resolves declared native transition edges and the
    target converter, and returns epJSON, upgraded IDF and build provenance.
+   Converter manifests select upstream `ConvertInputFormat` to preserve HVAC
+   templates; legacy manifests retain the engine CLI conversion invocation.
    Protocol-1 converter registries remain compatible with worker protocol 2. The store posts epJSON to the existing geometry
    worker contract. Full source documents are retained outside `EpModel` for
    download and future simulation. See `docs/energyplus.md` for artifact status.
