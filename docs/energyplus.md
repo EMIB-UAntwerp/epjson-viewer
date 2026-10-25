@@ -8,6 +8,10 @@ HVAC-template preservation. Its WASM download is 5.9 MB before HTTP compression.
 The earlier engine CLI candidate `26.1.0-df6b27a725d576fc` is retained for rollback;
 it rejects unexpanded HVAC templates and its WASM download is 31.3 MB.
 
+The optimized assignment runtime is installed locally for all sixteen transition
+edges. The selected converter is unchanged. Measurements, the current archive
+and rollback commands are in [the runtime optimization section](#assignment-runtime-optimization-2026-10-24).
+
 No public release is pinned in `scripts/energyplus/release.json` yet. Generated
 artifacts are ignored by Git: a fresh checkout or deployment needs the build
 and installation steps below, or a published release pin. Without installed
@@ -38,15 +42,20 @@ unchanged.
   directly importing the native reference epJSON produces no canvas.
 - Existing 35 focused checks, production build/typecheck and Chromium urban-block
   render/picking pass. Existing compiler and Vite chunk-size warnings remain
-  visible. New regression tests: not written; awaiting manual acceptance.
+  visible. No new regression tests were written; adding them requires a separate
+  explicit request.
 
 The reported `Building_Two_LoWD4.idf` was unavailable locally; the reproduced
-failure and correction use upstream template models. Upgrade runtime performance
-has not been changed. Evidence, screenshots and native outputs are under
+failure and correction use upstream template models. That compatibility fix left
+upgrade runtime performance unchanged. Evidence, screenshots and native outputs are under
 `.energyplus-build/template-compatibility/`; the new converter also includes
 an asset-bound `validation.json` receipt.
 
-The current combined candidate includes the new converter, the previous engine
+The user confirmed that the compatibility fix works. The original plan is in
+[the runtime-performance handoff](idf-runtime-performance-handoff.md); the
+implemented optimization and measured results are documented below.
+
+The compatibility rollback candidate includes the new converter, the previous engine
 for rollback and all sixteen validated transitions:
 
 ```sh
@@ -274,3 +283,145 @@ support need their own native parity checks before being enabled.
 Sources: [EnergyPlus CLI](https://github.com/NatLabRockies/EnergyPlus/blob/develop/doc/running-energyplus-from-command-line.md),
 [upstream WASM discussion](https://github.com/NatLabRockies/EnergyPlus/issues/9997),
 [Emscripten modular output](https://emscripten.org/docs/compiling/Modularized-Output.html).
+
+## Assignment runtime optimization (2026-10-24)
+
+The Flang build recipe now replaces `assign.o` with the **unchanged** pinned
+LLVM 21.1.8 assignment implementation compiled by Emscripten 6.0.0 at `-O2`.
+The distribution's assignment bitcode has `minsize`/`optsize` attributes;
+requesting `-O2` only at final link does not remove them. The recipe records the
+assignment source/object hashes alongside the existing compiler, intrinsic
+module, ABI patch, append-position repair and final runtime hashes. Transition
+Fortran compilation and final linking remain `-O2`, with `--fatal-warnings`.
+No EnergyPlus rules, dictionaries, browser protocol or converter changed.
+
+Three serial, alternating Chromium runs of the 9.6 → 22.1 edge produced these
+native-execution measurements (seconds, median with min–max):
+
+| Runtime | Small model | HVAC model |
+| --- | ---: | ---: |
+| Accepted baseline | 30.55 (30.05–33.25) | 73.27 (68.84–77.02) |
+| Rebuilt assignment, `-O2` | 13.91 (13.62–16.49) | 22.91 (20.90–30.64) |
+| Rebuilt assignment, `-O3` | 14.83 (14.02–21.61) | 22.75 (22.09–26.39) |
+
+All eighteen outputs were byte-identical to the unchanged native references.
+`-O2` was selected because `-O3` showed no consistent additional benefit.
+These isolated-edge results are not full-import speedup claims. Diagnostic
+harnesses, exact flags, hashes and raw measurements are retained locally under
+`.energyplus-build/runtime-performance/`. The earlier CPU profiles remain bound
+to the unchanged baseline WASM hash recorded in the performance handoff.
+
+The local candidate reuses the accepted, hash-checked compiler/intrinsic modules
+and unchanged Fortran objects, replacing only the assignment runtime object and
+relinking every edge. Its evidence retains the original compilation records,
+records reused-object hashes and records each new strict link invocation.
+The complete source-build recipe in `scripts/energyplus/build-flang.mjs` applies
+the same runtime change when rebuilding the toolchain from scratch.
+
+Native validation on 2026-10-25 covers all sixteen new transition hashes in
+Chromium and Firefox. Chromium completed both the small and HVAC models from
+8.9 and 9.6; Firefox completed both models from 9.6 and the small model from
+8.9. Ordered IDF objects/fields and trimmed audit lines match the unchanged
+native references. Final epJSON matches native **ConvertInputFormat**; receipts
+bind these comparisons to each new loader, WASM and support checksum.
+
+Chromium's upgraded-template UI renders and supports picking. Both UI downloads
+match native output in Chromium and Firefox. Chromium also retains its previous
+model after cancellation, invalid input, missing assets, checksum failure and a
+superseded job; retry succeeds. Firefox still cannot render in this headless
+WebGL2 environment, so its downloads/conversion pass does not count as a render
+pass. The original private `Building_Two_LoWD4.idf` remains unavailable.
+
+The existing 35 focused store/parser checks, production typecheck/build and
+Chromium urban-block render/picking check pass. Vite's default bundled config
+loader encounters this environment's read-only `node_modules`; verification
+used its supported `--configLoader runner` option (and `--no-cache` for Vitest).
+No test files or configuration were changed.
+
+Timing runs use local HTTP serving on a Linux x64 Intel Core i7-1370P, Chromium
+149.0.7827.55 and Firefox 151.0. Baseline/candidate jobs run serially with
+alternating order, without CPU sampling or competing build/test jobs. Every job
+has a fresh worker/native state. HTTP contexts are reused for repetitions;
+compiled WASM code may remain cached within a browser process. The interrupted
+Chromium run resumed on October 25 with new contexts, which are recorded as cold
+rather than mislabeled as cached. Browser versions, input hashes, per-phase
+measurements, transfer sizes and artifact hashes are retained with the results.
+
+Memory is the externally sampled sum of browser-process RSS at two-second
+intervals, including shared pages and browser caches; it is not a unique-resident
+or exact instantaneous peak. An earlier in-worker memory probe was excluded from
+final timings because observing weak references could prolong runtime lifetimes.
+Remote transfer/compression performance was not measured. The new transition
+WASM files total 10,375,486 bytes versus 9,850,145 bytes for the baseline; support
+assets and converter bytes are unchanged. No worker orchestration, persistent
+model cache or native-instance reuse was introduced.
+
+### Complete conversion measurements and local delivery (2026-10-25)
+
+These are measured complete transition chains **plus final conversion through
+output reading**, not sums extrapolated from a single edge. Each row has three
+unprofiled runs per variant; seconds are median (minimum–maximum).
+
+| Browser / input | Baseline | Optimized | Median speedup |
+| --- | ---: | ---: | ---: |
+| Chromium, small 9.6 → 26.1 | 173.07 (165.28–347.49) | 91.21 (72.44–182.51) | 1.90× |
+| Chromium, HVAC 9.6 → 26.1 | 362.40 (361.89–495.40) | 133.10 (123.79–145.13) | 2.72× |
+| Chromium, template 25.2 → 26.1 | 26.21 (25.73–35.30) | 11.43 (10.68–14.75) | 2.29× |
+| Firefox, template 25.2 → 26.1 | 208.71 (203.82–210.95) | 49.49 (36.11–50.31) | 4.22× |
+
+The proposed 2× full-chain target was exceeded for HVAC but not for the small
+model. The measured 1.90× small-model result is retained without substituting
+an isolated-function or best-run result. Direct 26.1 template conversion uses
+the unchanged converter: medians were 0.226/0.240 s in Chromium and 1.000/0.917 s
+in Firefox (baseline/candidate), with overlapping ranges.
+
+Single-run 8.9 → 26.1 comparisons were 322.40 → 147.86 s for the small model
+and 675.37 → 241.60 s for HVAC in Chromium; these are compatibility/performance
+observations, not repeated medians. Firefox's candidate full chains took
+407.49 s (small 9.6), 464.32 s (HVAC 9.6) and 569.81 s (small 8.9). Full-chain
+Firefox baseline timings were not repeated, so no full-chain Firefox speedup
+is claimed. All **43 recorded imports** passed native comparisons.
+
+The reused HTTP contexts did **not** yield cache hits for the large 9.6 chains:
+resource timing reported approximately 91.25 MB baseline / 91.55 MB candidate
+transferred on each run. Do not describe those repetitions as fully cached
+imports. Short template cases did report zero resource-transfer bytes on their
+warm repetitions, versus about 15.64/15.67 MB on cold 25.2 imports. The largest
+sampled browser-process RSS for complete Chromium chains was 1,499 MiB baseline
+and 1,492 MiB candidate; this does not establish a memory optimization.
+
+A separate run of the real application, using the production worker and UI,
+reached the two-animation-frame check after canvas creation **71.86 s** after
+the upload request for the small 9.6 model. Conversion-worker time was 71.68 s,
+geometry-worker time 23.9 ms, and geometry completion to that frame check
+107.6 ms. The screenshot was captured after the check. These single UI timings
+are separate from the repeated conversion medians above; no production
+instrumentation or worker-message changes were added.
+
+The complete candidate was installed with the normal installer. Its registry
+and every installed asset checksum were verified, and the production
+build/typecheck passed again with the installed assets. Reinstall it with:
+
+```sh
+npm run energyplus:install -- .energyplus-build/runtime-performance/candidate
+```
+
+Local archive:
+`.energyplus-build/energyplus-browser-upgrades-8.9-to-26.1-runtime.tar.gz`.
+SHA-256:
+`875e2139d4ed1ab9a45ff0b4c82671910f427caae8256ab139678578209f6373`.
+
+The accepted compatibility candidate and its archive remain intact. Roll back
+with:
+
+```sh
+npm run energyplus:install -- .energyplus-build/template-compatibility/candidate
+```
+
+Raw timings, environments, input/artifact hashes, native comparisons, screenshots
+and the application timing trace are under `.energyplus-build/runtime-performance/`;
+`summary.json` contains the aggregate timings and `parity.json` the 43 import
+results. No release pin, commit, push or publication was made. Public types,
+worker contracts and application data flow are unchanged.
+
+New regression tests: not written; awaiting manual acceptance.

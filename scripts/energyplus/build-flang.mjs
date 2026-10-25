@@ -82,8 +82,7 @@ try {
   }
   await mkdir(dirname(join(output, runtimeRelative)), { recursive: true })
   await cp(join(distribution, runtimeRelative), join(output, runtimeRelative))
-  // Replace only the append-position implementation; preserve the rest of the
-  // pinned runtime. max()-2 overflows when upstream appends its IDD audit.
+  // max()-2 overflows when upstream appends its IDD audit.
   const runtimeObject = join(root, 'external-unit.o')
   run('em++', ['-std=c++17', '-O2', '-DNDEBUG', '-fno-exceptions', '-fno-rtti',
     '-I', join(source, 'flang/include'), '-I', join(source, 'flang-rt/include'),
@@ -91,6 +90,20 @@ try {
   ])
   run('emar', ['r', join(output, runtimeRelative), runtimeObject])
   evidence.runtimeObjectSha256 = digest(await readFile(runtimeObject))
+  // The distribution's assignment bitcode carries minsize/optsize attributes
+  // that survive final -O2 linking. Rebuild the unchanged implementation so
+  // character padding and descriptor traversal can be optimized for speed.
+  const assignmentSource = join(source, 'flang-rt/lib/runtime/assign.cpp')
+  const assignmentObject = join(root, 'assign.o')
+  run('em++', ['-std=c++17', '-O2', '-DNDEBUG', '-fno-exceptions', '-fno-rtti',
+    '-I', join(source, 'flang/include'), '-I', join(source, 'flang-rt/include'),
+    '-c', assignmentSource, '-o', assignmentObject,
+  ])
+  run('emar', ['r', join(output, runtimeRelative), assignmentObject])
+  evidence.assignment = {
+    sourceSha256: digest(await readFile(assignmentSource)),
+    objectSha256: digest(await readFile(assignmentObject)), optimization: '-O2',
+  }
   evidence.runtimeSha256 = digest(await readFile(join(output, runtimeRelative)))
   await cp(join(source, 'LICENSE.TXT'), join(output, 'LICENSE-LLVM.txt'))
   evidence.compilerSha256 = digest(await readFile(join(output, 'bin/flang-new')))

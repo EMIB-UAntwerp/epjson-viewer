@@ -25,6 +25,9 @@ The original engine CLI assets remain usable; transition rules and the worker
 message contract are unchanged. See `docs/energyplus.md` for current candidate
 installation and validation evidence.
 
+The user has confirmed that compatibility now works. Performance work is planned
+separately in [the runtime-performance handoff](idf-runtime-performance-handoff.md).
+
 ## Objective and authorization
 
 The user wants older IDFs, including version 9.6, to load automatically and
@@ -69,7 +72,7 @@ original IDF
   → identify source version
   → resolve a supported chain of native transitions
   → upgraded IDF at the configured target version
-  → matching native EnergyPlus --convert-only
+  → matching upstream ConvertInputFormat (preserves HVAC templates)
   → complete epJSON + provenance + diagnostics
   → existing geometry worker → viewer
 ```
