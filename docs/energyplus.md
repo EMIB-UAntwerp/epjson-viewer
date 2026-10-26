@@ -2,15 +2,20 @@
 
 ## Current delivery status
 
-EnergyPlus 26.1.0 has been compiled with Emscripten 6.0.0 and installed locally. The format-conversion
-candidate `26.1.0-360096b1fc5a6c8d` uses upstream `ConvertInputFormat`, including
-HVAC-template preservation. Its WASM download is 5.9 MB before HTTP compression.
-The earlier engine CLI candidate `26.1.0-df6b27a725d576fc` is retained for rollback;
-it rejects unexpanded HVAC templates and its WASM download is 31.3 MB.
+Normal IDF imports now preserve their declared version. The pinned inventory covers
+19 stable releases across 18 families, from 8.9.0 through 26.2.0, including 9.0.1.
+See the [schema and geometry coverage report](epjson-schema-coverage.md) and the
+[implementation handoff](epjson-versioned-conversion-handoff.md).
 
-The optimized assignment runtime is installed locally for all sixteen transition
-edges. The selected converter is unchanged. Measurements, the current archive
-and rollback commands are in [the runtime optimization section](#assignment-runtime-optimization-2026-10-24).
+The separate **Upgrade version…** action offers the existing validated 26.1 target
+for older IDFs. It produces upgraded IDF and epJSON downloads without changing the
+view or original-version downloads. No downgrade/no-op is offered for 26.1/26.2.
+The optimized sixteen-edge upgrader and its original embedded-schema converter
+`26.1.0-360096b1fc5a6c8d` remain available, with their rollback candidates intact.
+
+Current validation, installation and measurements are recorded in
+[versioned conversion delivery](#versioned-conversion-delivery-2026-10-26).
+Earlier dated sections below describe their respective historical deliveries.
 
 No public release is pinned in `scripts/energyplus/release.json` yet. Generated
 artifacts are ignored by Git: a fresh checkout or deployment needs the build
@@ -90,36 +95,35 @@ remain unverified. New regression tests: not written; awaiting manual acceptance
 
 ## Runtime boundary
 
-The store calls `src/energyplus/client.ts` only for `.idf` imports. The client
-creates a dedicated worker for each job. Worker protocol 2 permits `convert`,
-including a declared transition chain when installed; it provides request IDs,
-progress, diagnostics, upgraded IDF and source/target/build provenance. Cancellation
-terminates the worker, including a synchronous native call. A fresh worker
-isolates native global state and failed runs; the browser can cache engine assets.
+The store calls `src/energyplus/client.ts` only for IDF input. Protocol 3 separates
+`convert` from `upgrade`; each operation creates a fresh worker. Cancellation
+terminates even synchronous native execution. Conversion detects exactly one
+valid Version, selects its pinned full schema and converter, checks asset hashes,
+and runs the upstream parser. It never fetches transition assets. Missing,
+ambiguous and unsupported versions produce errors without a migration fallback.
 
-The worker reads the IDF Version object, resolves an explicit upgrade path from
-a protocol-2 registry (or accepts the original protocol-1 converter registry),
-then selects the target engine from `registry.json`,
-verifies the loader and WASM checksums, loads the modular Emscripten runtime,
-and runs upstream `ConvertInputFormat --format epjson --output /job/` when the
-manifest declares `invocation: "convert-input-format"`. Older manifests omit
-that field and retain the `energyplus --convert-only` invocation. Unknown
-invocations are rejected by the worker and installer. Its filesystem contains only
-that job's input and outputs. All model data stays in the browser.
+Protocol-3 registries bind exact schemas to converter builds and native/browser
+validation receipts. Short versions select their `.0` release; explicit patches
+must be inventoried. Legacy registries/manifests remain readable for rollback,
+but do not restore automatic upgrading. The selected schema is fetched on demand;
+direct epJSON loading fetches no conversion assets.
 
-Only complete successful converter output is passed to the existing epJSON
-geometry worker. The original source, upgraded IDF, provenance and full epJSON are kept outside
-the recentered geometry model. The UI offers both upgraded IDF and epJSON downloads. Conversion logs are separate from geometry warnings
-and bounded to 80 entries. The UI retains the displayed model when an import
-fails or is cancelled and offers converted epJSON even if geometry loading fails.
+8.9–9.5 use matching-release parsers with a documented template-preservation
+adapter; 9.6–26.2 share a schema-selectable 26.1 converter. Their compatibility and
+native-reference limitations are explicit in the coverage report. Neither path
+runs simulations, template expansion or macro preprocessing.
 
-Native conversion is stricter than the viewer's lenient epJSON parser. It does
-not itself upgrade old IDFs. Installed upstream transitions perform upgrades
-before conversion. Neither path runs simulations or macro/template preprocessors.
-The format utility preserves `HVACTemplate:*` objects without expansion; the
-older engine CLI rejects them even with `--convert-only`. Other dependencies
-requiring preprocessing must be prepared with the matching native tools.
-Missing, duplicate, or unsupported Version objects receive an import error.
+Complete successful epJSON goes to the existing geometry worker. A pure adapter
+resolves Space membership and 26.2 construction inheritance internally. Downloads
+and raw inspector objects retain the original data. Core public types and geometry
+worker messages are unchanged. Geometry remains lenient, including a warning for
+unverified epJSON versions.
+
+Optional upgrades have independent progress, diagnostics, cancellation, results
+and ordered transition provenance. Jobs are bound to their source document;
+new imports and closing invalidate them. Failure/retry cannot replace the current
+model or its original downloads. Native diagnostics remain bounded separately
+from geometry warnings. All processing stays in the browser.
 
 ## Transition candidates (2026-10-24)
 
@@ -267,18 +271,12 @@ the versioned adapter limits where that work occurs.
 
 ## Future simulation
 
-Native version migration now runs before conversion through the installed
-transition graph; see [the feasibility results and reproducible build](idf-transition-feasibility.md).
-The converter itself remains the original 26.1 build. Older input reaches it
-only after the declared upstream transition chain succeeds.
-
-The build targets the full upstream EnergyPlus executable, but the browser
-protocol exposes only conversion. A future `simulate` operation can reuse asset
-selection, worker isolation, cancellation, original input retention, diagnostics,
-and result delivery. It must add explicit weather/supporting-file handling,
-progress, simulation outputs, and capability validation. It must not reconstruct
-a simulation model from the viewer's geometry. Simulation and preprocessing
-support need their own native parity checks before being enabled.
+Native migration is an explicit optional action through the installed transition
+graph; see [the feasibility results and build](idf-transition-feasibility.md).
+The current worker exposes conversion and upgrading only. Simulation needs a
+separate engine capability, weather/supporting-file handling, progress, outputs
+and native parity checks. It must use the complete original model, never rebuild
+a simulation input from viewer geometry.
 
 Sources: [EnergyPlus CLI](https://github.com/NatLabRockies/EnergyPlus/blob/develop/doc/running-energyplus-from-command-line.md),
 [upstream WASM discussion](https://github.com/NatLabRockies/EnergyPlus/issues/9997),
@@ -423,5 +421,140 @@ and the application timing trace are under `.energyplus-build/runtime-performanc
 `summary.json` contains the aggregate timings and `parity.json` the 43 import
 results. No release pin, commit, push or publication was made. Public types,
 worker contracts and application data flow are unchanged.
+
+New regression tests: not written; awaiting manual acceptance.
+
+## Versioned conversion delivery (2026-10-26)
+
+Implemented the version-preserving handoff and installed the candidate locally.
+The official release inventory was checked on 2026-10-25: 19 stable releases,
+18 families, with separate 9.0.0 and 9.0.1 schemas. Full pins and geometry
+compatibility are in [the coverage report](epjson-schema-coverage.md).
+The shared schema-selectable converter is `26.1.0-a09a9035d93032ae`;
+8.9–9.5 use eight matching-release parser builds. Registry protocol 3 and
+conversion-worker protocol 3 separate conversion from optional upgrading.
+Core public types and the geometry-worker contract did not change.
+
+### Correctness and browser behavior
+
+- All 76 full native/WASM comparisons passed (four official models per release).
+  All 152 corresponding Chromium/Firefox comparisons passed, with zero transition
+  requests during normal imports. Receipts bind input, schema, loader, WASM and
+  native-reference hashes. Old-release native references use the documented
+  template-preservation adapter, not unmodified official template conversion.
+- The additional 26.2 ConstructionAssignmentSet example and 9.6 HospitalLowEnergy
+  input match native output. The assignment example renders with inherited
+  constructions, skylights, operable/fixed windows and doors; picking succeeds.
+- In both browsers, the 25.2 template upgrade downloads match the previously
+  validated native IDF and epJSON. Original downloads and model identity survive
+  cancellation, injected asset failure and retry. New imports and close invalidate
+  upgrades. A 26.2 import offers no downgrade. Unknown patches, missing/duplicate
+  versions and malformed versions error without fetching transitions. Direct
+  epJSON imports fetch no converter/schema assets.
+- Existing 68 focused store/parser/rectangle/sample checks pass. Production
+  typecheck/build passes. Chromium urban-block and 26.2 assignment render/picking
+  checks pass without page errors. Firefox conversion and downloads pass, but
+  headless WebGL2 remains unavailable: no Firefox rendering acceptance is claimed.
+- Installed registry and all 193 referenced asset checksums were verified.
+  No public release pin, publication, commit or push was made. Manual visual
+  acceptance remains pending; Safari/mobile and memory limits were not assessed.
+
+Evidence is under `.energyplus-build/versioned-conversion/`: `native-parity.json`,
+`browser-parity.json`, `browser-environments.json`, `ui-validation.json`,
+`invalid-version-checks.json`, `assignment-reference/`, `hospital-9.6/`,
+`performance.json` and `performance-summary.json`. Private models are not packaged.
+
+### Measured imports
+
+Three unprofiled runs per input/cache/browser; Linux x64, Intel Core i7-1370P,
+Chromium 149.0.7827.55 (SwiftShader), Firefox 151.0. Each cold run starts a fresh
+browser context; its warm partner reuses that context and HTTP cache but creates
+fresh native/geometry workers. No builds or other validation jobs ran concurrently.
+Inputs are the pinned release's official examples; exact input and runtime hashes
+are retained with the evidence. Server responses were uncompressed over loopback.
+
+Times below are seconds, median [min–max]. Chromium measures File.text through
+ready plus two animation frames with a canvas; this is an observation proxy, not
+a GPU presentation timestamp. Firefox uses ready plus two frames **without a
+canvas**, so its times are conversion/UI readiness, not render timings.
+
+| Browser | Release / model | Cold | Warm |
+| --- | --- | --- | --- |
+| Chromium | 9.6.0 / 1ZoneUncontrolled | 0.612 [0.599–0.630] | 0.579 [0.507–0.639] |
+| Chromium | 9.6.0 / HospitalLowEnergy | 1.418 [1.344–2.035] | 1.261 [1.213–1.325] |
+| Chromium | 9.6.0 / HVACTemplate-5ZonePurchAir | 0.614 [0.578–0.667] | 0.654 [0.612–0.677] |
+| Chromium | 8.9.0 / 1ZoneUncontrolled | 0.662 [0.637–0.695] | 0.589 [0.585–0.605] |
+| Chromium | 26.2.0 / 1ZoneUncontrolled | 0.616 [0.555–0.620] | 0.538 [0.526–0.589] |
+| Firefox | 9.6.0 / 1ZoneUncontrolled | 1.471 [1.416–1.499] | 1.373 [1.289–1.424] |
+| Firefox | 9.6.0 / HospitalLowEnergy | 4.475 [3.909–5.725] | 5.344 [4.384–5.373] |
+| Firefox | 9.6.0 / HVACTemplate-5ZonePurchAir | 1.716 [1.715–1.919] | 1.852 [1.420–1.991] |
+| Firefox | 8.9.0 / 1ZoneUncontrolled | 1.602 [1.440–1.718] | 1.558 [1.474–1.604] |
+| Firefox | 26.2.0 / 1ZoneUncontrolled | 1.809 [1.732–1.904] | 1.474 [1.390–1.978] |
+
+Cold conversion assets transferred 11,219,041 bytes for 9.6, 10,405,279 for 8.9
+and 11,900,352 for 26.2 (including registry/manifest). Firefox warm runs transferred
+zero asset-body bytes. Chromium warm runs fetched the large schema again:
+9,903,021 bytes for 9.6, 9,789,090 for 8.9 and 10,584,332 for 26.2. These are server
+body-byte observations, excluding HTTP headers, app assets and compression; warm
+does not mean every asset was served from cache. See raw records for each run.
+
+For the Chromium cold 9.6 small model, phase medians in milliseconds were file
+reading 3.8, version detection 0.5, registry/manifest 9.7, assets plus verification
+99.1, WASM initialization 11.6, conversion/output reading 287.9, output JSON parse
+0.2, geometry worker dispatch-to-result 17.3 and ready-to-two-frames 11.3. The
+remaining main-thread/startup/delivery gap was 174.9 ms. Phase medians need not sum
+to the total median. Per-asset fetch and hash spans are parallel detail within
+the assets phase, not additional additive stages. Geometry timing includes worker
+startup/JSON parsing and transfer, not just triangulation. Memory was not profiled.
+
+Optional upgrading remains expensive. The separate 25.2→26.1 UI retry took
+18.28 s in Chromium (17.84 s transition) and 79.04 s in Firefox (77.66 s transition).
+These are single functional runs, not repeated performance medians; their cache
+state includes earlier cancellation/failure. Each transition and final conversion
+phase is recorded separately. The historical sixteen-edge upgrade measurements
+above remain valid historical evidence, not estimates for direct conversion.
+
+### Build, install and rollback
+
+Use the pinned Emscripten 6.0.0 SDK and existing build prerequisites. These commands
+assemble candidates, without changing the installed registry until the final step:
+
+```sh
+python3 scripts/energyplus/fetch-schemas.py .energyplus-build/versioned-conversion
+source .energyplus-build/emsdk/emsdk_env.sh
+npm run energyplus:build -- --schema-converter
+# Repeat for v8.9.0, v9.0.0, v9.0.1, v9.1.0, v9.2.0, v9.3.0, v9.4.0, v9.5.0:
+python3 scripts/energyplus/build-legacy-parser.py .energyplus-build/versioned-conversion v8.9.0
+python3 scripts/energyplus/validate-schemas.py .energyplus-build/versioned-conversion --native-library-path .energyplus-build/native-libs/usr/lib/x86_64-linux-gnu
+python3 scripts/energyplus/package-schemas.py .energyplus-build/versioned-conversion .energyplus-build/runtime-performance/candidate
+# Perform Chromium/Firefox parity validation and bind browser-parity.json receipts,
+# then rerun package-schemas.py. The installer rejects missing/mismatched evidence.
+npm run energyplus:install -- .energyplus-build/versioned-conversion/candidate
+```
+
+The native library override is needed only for the official 24.2/26.1 binaries on
+this host. Do not apply it indiscriminately: some older CLI versions misinterpret
+the loader's arguments. Legacy native builds use g++; browser builds use Emscripten.
+Pinned upstream source hashes and adapter hashes are retained in manifests. A
+shared runtime is permitted only after complete matching-release parity passes.
+
+Archive: `.energyplus-build/energyplus-browser-versioned-8.9-to-26.2.tar.gz` (43,333,424 bytes). It contains only
+registry-referenced validated runtimes, schemas and receipts; exploratory builds
+remain outside the archive. SHA-256:
+`c8f0fb11dc65d980d01663107c177205aee4412912e29a8374f9c3b6f6f971ed`.
+
+The previous registry is preserved at
+`.energyplus-build/versioned-conversion/registry-before.json`. To restore the
+previous optimized assets:
+
+```sh
+npm run energyplus:install -- .energyplus-build/runtime-performance/candidate
+```
+
+This is an **asset rollback**: with the new application code it restores direct
+26.1 conversion availability, not the old mandatory-upgrade behavior. Restoring
+that older behavior also requires the previous application code. The earlier
+compatibility candidate remains available as documented above. Do not run
+`energyplus:prepare` while the release pin is null; it installs an empty registry.
 
 New regression tests: not written; awaiting manual acceptance.

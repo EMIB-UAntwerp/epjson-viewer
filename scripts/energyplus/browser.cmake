@@ -18,7 +18,15 @@ if(TARGET generate_embeddable_epJSON_schema)
     "-sALLOW_MEMORY_GROWTH=1")
 endif()
 
-foreach(converter IN ITEMS energyplus ConvertInputFormat)
+set(browser_converters energyplus ConvertInputFormat)
+if(SCHEMA_CONVERTER_SOURCE)
+  get_filename_component(schema_adapter_dir "${SCHEMA_CONVERTER_SOURCE}" DIRECTORY)
+  add_executable(SchemaConvertInputFormat "${SCHEMA_CONVERTER_SOURCE}" "${schema_adapter_dir}/SchemaValidation.cpp")
+  target_link_libraries(SchemaConvertInputFormat PRIVATE energyplusparser project_options project_warnings)
+  list(APPEND browser_converters SchemaConvertInputFormat)
+endif()
+
+foreach(converter IN LISTS browser_converters)
   set_target_properties(${converter} PROPERTIES
     OUTPUT_NAME "${converter}" SUFFIX ".mjs" VERSION ""
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/browser")

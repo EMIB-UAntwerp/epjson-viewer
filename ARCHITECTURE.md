@@ -84,9 +84,9 @@ The layer boundaries are load-bearing, not stylistic:
 ```
 file drop / picker / demo fetch
   → store.loadFile / store.loadText / store.loadDemo
-  → IDF only: EnergyPlus client → isolated WASM worker → declared native upgrades → target conversion → complete epJSON
+  → IDF only: EnergyPlus client → isolated WASM worker → matching-schema conversion → complete source-version epJSON
   → geometry Worker
-      → JSON.parse → parseEpjson → buildGeometry → transfer
+      → JSON.parse → parseEpjson (internal version adapter) → buildGeometry → transfer
   → store: markRaw(model), markRaw(bundle), status = 'ready'
   → ViewerCanvas.initModel → SceneManager.setModel → applyColors
       → setCategoryVisible / setHiddenZones / setInteriorVisible / setGhost
@@ -99,13 +99,18 @@ Step by step:
    before asynchronous reading. Starting another job or closing the model aborts
    conversion/fetch, terminates geometry work and invalidates stale responses.
 2. **Convert and dispatch.** IDFs go through `src/energyplus/client.ts`, which
-   creates a separate worker, resolves declared native transition edges and the
-   target converter, and returns epJSON, upgraded IDF and build provenance.
-   Converter manifests select upstream `ConvertInputFormat` to preserve HVAC
-   templates; legacy manifests retain the engine CLI conversion invocation.
-   Protocol-1 converter registries remain compatible with worker protocol 2. The store posts epJSON to the existing geometry
-   worker contract. Full source documents are retained outside `EpModel` for
-   download and future simulation. See `docs/energyplus.md` for artifact status.
+   creates a fresh native worker. Worker protocol 3 distinguishes `convert`
+   from explicit `upgrade` requests. Normal imports select a full matching
+   schema and never fetch transition assets. Registries/manifests from the
+   older upgrader remain readable but cannot restore automatic upgrading.
+   Full source and converted documents are retained outside `EpModel`.
+   The original geometry-worker message contract is unchanged.
+   See `docs/energyplus.md` and `docs/epjson-schema-coverage.md` for artifacts,
+   schema selection, build adapters and native-reference scope.
+   The store owns an independent upgrade controller, generation ID and source
+   identity guard. An upgrade returns downloads and provenance without posting
+   geometry work or replacing the displayed document. New imports and close
+   invalidate it, including late responses; retries use fresh workers.
 3. **Worker** (`modelWorker.ts`) runs `JSON.parse` (10%) → `parseEpjson` (35%)
    → `buildGeometry` (60%) → transfer (90%), appending build warnings to
    `model.warnings`, then posts `{type: 'done', model, bundle}` with the
@@ -163,6 +168,14 @@ The **worker contract** lives in `src/worker/modelWorker.ts`: `WorkerRequest`
 (`progress` | `done` | `error`). Changing either is a cross-layer change.
 
 ## Coordinate frames and transforms (a known trap) — `src/core/parse.ts`
+
+`geometryVersions.ts` supplies a pure internal adapter before these transforms.
+It warns on unverified versions, resolves Space-to-Zone references and 26.2
+construction assignments, and copies only changed objects. Downloads and
+`surface.raw` retain original epJSON. The common coordinate algorithm is shared
+across the pinned releases; schema-specific exceptions are documented in
+`docs/epjson-schema-coverage.md`.
+
 
 Transforms mirror EnergyPlus `SurfaceGeometry.cc` exactly. All rotation angles
 are **degrees clockwise from north**, which is why every angle is negated
@@ -339,7 +352,7 @@ One setup-style Pinia store, `useModelStore`. The rules that matter:
 - **`categoryVisible` is a plain `reactive` record** keyed by `Category` — it is
   small and benefits from deep reactivity.
 - The store owns the geometry Worker (`ensureWorker`), conversion job abort
-  controller and `requestId` staleness guard. The conversion client creates an
+  controller and `requestId` staleness guard, plus independent upgrade cancellation and source identity guards. The conversion client creates an
   isolated native worker per job. No component creates a Worker.
 - `setHiddenZones` re-anchors the selection: a group selection survives while
   any member is still visible, and only clears when all of them are hidden.

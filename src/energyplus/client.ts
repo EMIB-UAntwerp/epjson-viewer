@@ -11,6 +11,8 @@ export class ConversionError extends Error {
 export function convertIdf(
   text: string,
   options: {
+    operation?: 'convert' | 'upgrade'
+    targetVersion?: string
     id: number
     assetBaseUrl: string
     signal: AbortSignal
@@ -35,7 +37,7 @@ export function convertIdf(
     worker.onmessage = (event: MessageEvent<EngineResponse>) => {
       const message = event.data
       if (message.id !== options.id) return
-      if (message.protocol !== 2) {
+      if (message.protocol !== 3) {
         cleanup()
         reject(new ConversionError('Unsupported EnergyPlus worker protocol. Reload the page and retry.'))
         return
@@ -57,7 +59,8 @@ export function convertIdf(
       reject(new ConversionError('Could not read the EnergyPlus conversion result.'))
     }
     const request: EngineRequest = {
-      protocol: 2, id: options.id, operation: 'convert', text, assetBaseUrl: options.assetBaseUrl,
+      protocol: 3, id: options.id, text, assetBaseUrl: options.assetBaseUrl,
+      ...(options.operation === 'upgrade' ? { operation: 'upgrade', targetVersion: options.targetVersion! } : { operation: 'convert' }),
     }
     try {
       worker.postMessage(request)

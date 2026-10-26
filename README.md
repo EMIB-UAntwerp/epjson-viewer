@@ -40,13 +40,15 @@ simulation input, entirely in the browser. **Files never leave your machine.**
 
 Open the deployed page and drop an `.epJSON` file, or try the bundled
 anonymized demo models. IDF imports use separately installed EnergyPlus
-WebAssembly runtimes. When a validated upgrade chain is installed, older IDFs
-pass through upstream transitions before target-version conversion. The viewer
-offers the resulting epJSON and upgraded IDF for download. No simulation is run.
-The current format converter preserves HVAC templates without expanding them.
+WebAssembly runtimes. Normal imports preserve the source version and use its
+matching full schema. The **Upgrade version…** action shows its target before
+starting a separate job; upgraded IDF and epJSON downloads leave the current
+view and original-version downloads intact. No simulation or template expansion
+is run.
 
-**Public runtime delivery is pending:** EnergyPlus 26.1 conversion is built and
-validated locally, with the 8.9 → 26.1 upgrade chain installed for manual acceptance.
+**Public runtime delivery is pending:** the versioned inventory covers 19 stable
+releases from 8.9.0 through 26.2.0. Local validation and installation status is
+recorded in the setup guide below; the optional upgrade target remains 26.1.
 No downloadable release is currently pinned.
 See [browser conversion setup and upgrades](docs/energyplus.md) for build,
 installation and validation status. Without runtime assets, IDF import reports

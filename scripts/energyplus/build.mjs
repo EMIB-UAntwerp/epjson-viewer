@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process'
 import { appendFile, cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { schemaAdapter, validationAdapter } from './schema-adapter.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const config = JSON.parse(await readFile(join(here, 'build-config.json'), 'utf8'))
@@ -11,7 +12,8 @@ const workspace = join(root, '.energyplus-build', `${config.energyPlusVersion}-$
 const source = join(workspace, 'source')
 const build = join(workspace, 'build')
 const formatConverter = process.argv.includes('--format-converter')
-const target = formatConverter ? 'ConvertInputFormat' : 'energyplus'
+const schemaConverter = process.argv.includes('--schema-converter')
+const target = schemaConverter ? 'SchemaConvertInputFormat' : formatConverter ? 'ConvertInputFormat' : 'energyplus'
 
 function run(command, args, cwd = root, capture = false) {
   const result = spawnSync(command, args, { cwd, encoding: 'utf8', stdio: ['ignore', capture ? 'pipe' : 'inherit', 'inherit'] })
@@ -57,11 +59,16 @@ if (currentPlatform.trim() !== upstreamPlatform && currentPlatform !== browserPl
 }
 if (currentPlatform !== browserPlatform) await writeFile(join(source, platformFile), browserPlatform)
 
+const adapterPath = join(workspace, 'SchemaConvertInputFormat.cpp')
+if (schemaConverter) await writeFile(adapterPath, schemaAdapter(await readFile(join(source, 'src/ConvertInputFormat/main.cpp'), 'utf8')))
+if (schemaConverter) await writeFile(join(workspace, 'SchemaValidation.cpp'), validationAdapter(await readFile(join(source, 'src/EnergyPlus/InputProcessing/InputValidation.cc'), 'utf8')))
+
 run('emcmake', ['cmake', '-S', source, '-B', build, '-G', 'Ninja',
   '-DCMAKE_BUILD_TYPE=Release', '-DBUILD_STATIC_ENERGYPLUS_API=ON',
   '-DBUILD_TESTING=OFF', '-DBUILD_FORTRAN=OFF', '-DBUILD_PACKAGE=OFF',
   '-DLINK_WITH_PYTHON=OFF', '-DOPENGL_REQUIRED=OFF', '-DDOCUMENTATION_BUILD=DoNotBuild',
   '-DENABLE_GTEST_DEBUG_MODE=OFF',
+  `-DSCHEMA_CONVERTER_SOURCE=${schemaConverter ? adapterPath : ''}`,
   // cstdint supplies fixed-width types used by upstream SSC with recent Clang.
   '-DCMAKE_CXX_FLAGS=-fwasm-exceptions -include cstdint', '-DCMAKE_C_FLAGS=-fwasm-exceptions',
 ])
@@ -71,11 +78,12 @@ const digest = (bytes) => createHash('sha256').update(bytes).digest('hex')
 const recipeHash = digest(Buffer.concat([
   await readFile(fileURLToPath(import.meta.url)), await readFile(join(here, 'browser.cmake')),
   await readFile(join(here, 'build-config.json')),
+  await readFile(join(here, 'schema-adapter.mjs')),
 ]))
 const loaderBytes = await readFile(join(build, `browser/${target}.mjs`))
 const wasmBytes = await readFile(join(build, `browser/${target}.wasm`))
 const buildId = `${config.energyPlusVersion}-${digest(Buffer.concat([loaderBytes, wasmBytes])).slice(0, 16)}`
-const artifactRoot = join(root, '.energyplus-build/candidate')
+const artifactRoot = join(root, schemaConverter ? '.energyplus-build/versioned-conversion/candidate' : '.energyplus-build/candidate')
 const output = join(artifactRoot, buildId)
 await mkdir(output, { recursive: true })
 const assets = {}
@@ -99,12 +107,13 @@ async function copyNotices(directory, relative = '') {
 }
 await copyNotices(join(source, 'third_party'))
 await writeFile(join(output, 'manifest.json'), JSON.stringify({
-  protocol: 1, energyPlusVersion: config.energyPlusVersion, sourceCommit: commit,
-  ...(formatConverter ? { invocation: 'convert-input-format' } : {}),
+  protocol: schemaConverter ? 3 : 1, energyPlusVersion: config.energyPlusVersion, sourceCommit: commit,
+  ...(schemaConverter ? { invocation: 'schema-convert-input-format' } : formatConverter ? { invocation: 'convert-input-format' } : {}),
   sourceRef: config.ref, emscriptenVersion: config.emscriptenVersion,
   recipeHash, buildId, capabilities: ['convert'], ...assets,
 }, null, 2) + '\n')
 await writeFile(join(artifactRoot, 'registry.json'), JSON.stringify({
   protocol: 1, engines: [{ modelVersion: config.energyPlusVersion.split('.').slice(0, 2).join('.'), manifest: `${buildId}/manifest.json` }],
 }, null, 2) + '\n')
+if (schemaConverter) await writeFile(join(artifactRoot, '../shared-runtime.json'), JSON.stringify({ manifest: `${buildId}/manifest.json` }, null, 2) + '\n')
 console.log(`Artifact built at ${artifactRoot}. Validate against native EnergyPlus before promotion.`)
