@@ -1,0 +1,440 @@
+--- a/flang/include/flang/Optimizer/Builder/Runtime/RTBuilder.h
++++ b/flang/include/flang/Optimizer/Builder/Runtime/RTBuilder.h
+@@ -24,9 +24,12 @@
+ #include "flang/Runtime/io-api.h"
+ #include "flang/Runtime/reduce.h"
+ #include "flang/Support/Fortran.h"
++#include "mlir/Dialect/LLVMIR/LLVMTypes.h"
+ #include "mlir/IR/BuiltinTypes.h"
+ #include "mlir/IR/MLIRContext.h"
++#include "mlir/Interfaces/DataLayoutInterfaces.h"
+ #include "llvm/ADT/STLExtras.h"
++#include "llvm/TargetParser/Triple.h"
+ #include "llvm/ADT/SmallVector.h"
+ #include <cstdint>
+ #include <functional>
+@@ -54,6 +57,18 @@
+ 
+ using TypeBuilderFunc = mlir::Type (*)(mlir::MLIRContext *);
+ using FuncTypeBuilderFunc = mlir::FunctionType (*)(mlir::MLIRContext *);
++
++//===----------------------------------------------------------------------===//
++// Target-aware type size helpers for cross-compilation
++//===----------------------------------------------------------------------===//
++
++/// Helper to get the size of 'size_t' for the target.
++/// size_t matches pointer size on all common platforms (LP64, ILP32, LLP64).
++inline unsigned getTargetSizeTBitwidth(mlir::MLIRContext *context,
++                                       const mlir::DataLayout &dl) {
++  auto ptrType = mlir::LLVM::LLVMPointerType::get(context);
++  return dl.getTypeSizeInBits(ptrType);
++}
+ 
+ #define REDUCTION_REF_OPERATION_MODEL(T)                                       \
+   template <>                                                                  \
+@@ -697,6 +712,81 @@
+     return mlir::FunctionType::get(context, {voidTy, voidTy, voidTy}, voidTy);
+   };
+ }
++
++//===----------------------------------------------------------------------===//
++// DataLayout-aware type builders for cross-compilation
++//===----------------------------------------------------------------------===//
++
++/// Primary template - most types don't need DataLayout, delegate to getModel
++template <typename T>
++struct DLGetModel {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &,
++                        const llvm::Triple &) {
++    return getModel<T>()(context);
++  }
++};
++
++// NOTE: we intentionally do NOT specialize DLGetModel<long> (signed).
++// On LP64 (linux), int64_t = long. Narrowing long would incorrectly
++// shrink int64_t params like OutputInteger64. Only unsigned types
++// used for size_t are specialized below.
++
++/// unsigned long - matches size_t on LP64 (linux/mac 64-bit).
++/// On ILP32 (wasm32) and LLP64 (windows), unsigned long is already 32-bit.
++template <>
++struct DLGetModel<unsigned long> {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &dl,
++                        const llvm::Triple &) {
++    return mlir::IntegerType::get(context, getTargetSizeTBitwidth(context, dl));
++  }
++};
++
++template <>
++struct DLGetModel<unsigned long *> {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &dl,
++                        const llvm::Triple &triple) {
++    return fir::ReferenceType::get(
++        DLGetModel<unsigned long>::get(context, dl, triple));
++  }
++};
++
++template <>
++struct DLGetModel<const unsigned long *> {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &dl,
++                        const llvm::Triple &triple) {
++    return DLGetModel<unsigned long *>::get(context, dl, triple);
++  }
++};
++
++/// unsigned long long - 8 bytes on LP64/LLP64, used as size_t on Windows (LLP64)
++/// On LP64 (Linux/Mac), size_t = unsigned long (already specialized above)
++template <>
++struct DLGetModel<unsigned long long> {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &dl,
++                        const llvm::Triple &) {
++    // When used as size_t (Windows), should match target pointer size
++    return mlir::IntegerType::get(context, getTargetSizeTBitwidth(context, dl));
++  }
++};
++
++/// ReductionCharOperation<CHAR> - function pointer with std::size_t parameters
++/// Signature: void (*)(CHAR*, size_t, const CHAR*, const CHAR*, size_t, size_t)
++/// size_t matches pointer size on all platforms (LP64, ILP32, LLP64).
++template <typename CHAR>
++struct DLGetModel<Fortran::runtime::ReductionCharOperation<CHAR>> {
++  static mlir::Type get(mlir::MLIRContext *context, const mlir::DataLayout &dl,
++                        const llvm::Triple &) {
++    auto charTy = getModel<CHAR>()(context);
++    auto voidTy = fir::LLVMPointerType::get(context,
++                                            mlir::IntegerType::get(context, 8));
++    // size_t matches pointer size on all common platforms
++    auto sizeTy = mlir::IntegerType::get(context,
++                                         getTargetSizeTBitwidth(context, dl));
++    auto refTy = fir::ReferenceType::get(charTy);
++    return mlir::FunctionType::get(
++        context, {refTy, sizeTy, refTy, refTy, sizeTy, sizeTy}, voidTy);
++  }
++};
+ 
+ template <typename...>
+ struct RuntimeTableKey;
+@@ -715,6 +805,20 @@
+       return mlir::FunctionType::get(ctxt, argTys, {retTy});
+     };
+   }
++
++  /// DataLayout-aware type model for cross-compilation support.
++  /// Uses DLGetModel which correctly handles platform-dependent types like
++  /// 'long' and 'unsigned long' based on target data layout and triple.
++  static mlir::FunctionType getTypeModelDL(mlir::MLIRContext *ctxt,
++                                           const mlir::DataLayout &dl,
++                                           const llvm::Triple &triple) {
++    mlir::Type retTy = DLGetModel<RT>::get(ctxt, dl, triple);
++    llvm::SmallVector<mlir::Type, sizeof...(ATs)> argTys = {
++        DLGetModel<ATs>::get(ctxt, dl, triple)...};
++    if (mlir::isa<mlir::NoneType>(retTy))
++      return mlir::FunctionType::get(ctxt, argTys, {});
++    return mlir::FunctionType::get(ctxt, argTys, {retTy});
++  }
+ };
+ 
+ //===----------------------------------------------------------------------===//
+@@ -763,6 +867,11 @@
+ struct RuntimeTableEntry<RuntimeTableKey<KT>, RuntimeIdentifier<Cs...>> {
+   static constexpr FuncTypeBuilderFunc getTypeModel() {
+     return RuntimeTableKey<KT>::getTypeModel();
++  }
++  static mlir::FunctionType getTypeModelDL(mlir::MLIRContext *ctxt,
++                                           const mlir::DataLayout &dl,
++                                           const llvm::Triple &triple) {
++    return RuntimeTableKey<KT>::getTypeModelDL(ctxt, dl, triple);
+   }
+   static constexpr const char name[sizeof...(Cs) + 1] = {Cs..., '\0'};
+ };
+@@ -803,8 +912,46 @@
+ #define mkRTKey(X) FirmkKey(RTNAME(X))
+ #define EXPAND_AND_QUOTE_KEY(S) ExpandAndQuoteKey(RTNAME(S))
+ 
++namespace detail {
++/// SFINAE helper to detect if a type has getTypeModelDL(ctxt, dl, triple).
++template <typename T, typename = void>
++struct HasGetTypeModelDL : std::false_type {};
++
++template <typename T>
++struct HasGetTypeModelDL<
++    T, std::void_t<decltype(T::getTypeModelDL(
++           std::declval<mlir::MLIRContext *>(),
++           std::declval<const mlir::DataLayout &>(),
++           std::declval<const llvm::Triple &>()))>> : std::true_type {};
++
++/// Get function type using DataLayout-aware builder if available.
++/// This overload is used when the RuntimeEntry has getTypeModelDL().
++template <typename RuntimeEntry>
++static mlir::FunctionType
++getFunctionType(fir::FirOpBuilder &builder,
++                std::enable_if_t<HasGetTypeModelDL<RuntimeEntry>::value> * =
++                    nullptr) {
++  auto module = builder.getModule();
++  return RuntimeEntry::getTypeModelDL(builder.getContext(),
++                                      builder.getDataLayout(),
++                                      fir::getTargetTriple(module));
++}
++
++/// Fallback when RuntimeEntry doesn't have getTypeModelDL().
++template <typename RuntimeEntry>
++static mlir::FunctionType
++getFunctionType(fir::FirOpBuilder &builder,
++                std::enable_if_t<!HasGetTypeModelDL<RuntimeEntry>::value> * =
++                    nullptr) {
++  return RuntimeEntry::getTypeModel()(builder.getContext());
++}
++} // namespace detail
++
+ /// Get (or generate) the MLIR FuncOp for a given runtime function. Its template
+ /// argument is intended to be of the form: <mkRTKey(runtime function name)>.
++/// Uses DataLayout-aware type building when available to correctly handle
++/// cross-compilation scenarios where host and target type sizes differ
++/// (e.g., sizeof(long)).
+ template <typename RuntimeEntry>
+ static mlir::func::FuncOp getRuntimeFunc(mlir::Location loc,
+                                          fir::FirOpBuilder &builder,
+@@ -814,7 +961,24 @@
+   auto func = builder.getNamedFunction(name);
+   if (func)
+     return func;
+-  auto funTy = RuntimeEntry::getTypeModel()(builder.getContext());
++  auto funTy = detail::getFunctionType<RuntimeEntry>(builder);
++  // Host typedef identity loses the distinction between uint64_t and size_t,
++  // and between ptrdiff_t and int64_t. Model these ABI parameters explicitly.
++  if (fir::getTargetTriple(builder.getModule()).getArch() == llvm::Triple::wasm32) {
++    llvm::StringRef symbol{name};
++    auto inputs = llvm::to_vector(funTy.getInputs());
++    if (symbol == "_FortranAAllocatableSetBounds" ||
++        symbol == "_FortranAAllocatableSetCoBounds") {
++      inputs[2] = builder.getI32Type();
++      inputs[3] = builder.getI32Type();
++    } else if (symbol == "_FortranAioInquireCharacter" ||
++               symbol == "_FortranAioInquireLogical" ||
++               symbol == "_FortranAioInquireInteger64") {
++      inputs[1] = builder.getI64Type();
++    }
++    funTy = mlir::FunctionType::get(builder.getContext(), inputs,
++                                  funTy.getResults());
++  }
+   return builder.createRuntimeFunction(loc, name, funTy, isIO);
+ }
+ 
+--- a/flang/lib/Optimizer/CodeGen/Target.cpp
++++ b/flang/lib/Optimizer/CodeGen/Target.cpp
+@@ -1871,6 +1871,44 @@
+     int FARsLeft = FRLen ? 2 : 0;
+     return classifyStruct(loc, recTy, GARsLeft, FARsLeft, /*isResult=*/true,
+                           {});
++  }
++};
++} // namespace
++
++//===----------------------------------------------------------------------===//
++// WebAssembly (wasm32) target specifics.
++//===----------------------------------------------------------------------===//
++
++namespace {
++struct TargetWasm32 : public GenericTarget<TargetWasm32> {
++  using GenericTarget::GenericTarget;
++
++  static constexpr int defaultWidth = 32;
++
++  CodeGenSpecifics::Marshalling
++  complexArgumentType(mlir::Location, mlir::Type eleTy) const override {
++    assert(fir::isa_real(eleTy));
++    CodeGenSpecifics::Marshalling marshal;
++    // Use a type that will be translated into LLVM as:
++    // { t, t }   struct of 2 eleTy, byval, align 4
++    auto structTy =
++        mlir::TupleType::get(eleTy.getContext(), mlir::TypeRange{eleTy, eleTy});
++    marshal.emplace_back(fir::ReferenceType::get(structTy),
++                         AT{/*alignment=*/4, /*byval=*/true});
++    return marshal;
++  }
++
++  CodeGenSpecifics::Marshalling
++  complexReturnType(mlir::Location loc, mlir::Type eleTy) const override {
++    assert(fir::isa_real(eleTy));
++    CodeGenSpecifics::Marshalling marshal;
++    // Use a type that will be translated into LLVM as:
++    // { t, t }   struct of 2 eleTy, sret, align 4
++    auto structTy = mlir::TupleType::get(eleTy.getContext(),
++                                          mlir::TypeRange{eleTy, eleTy});
++    marshal.emplace_back(fir::ReferenceType::get(structTy),
++                          AT{/*alignment=*/4, /*byval=*/false, /*sret=*/true});
++    return marshal;
+   }
+ };
+ } // namespace
+@@ -1933,6 +1971,9 @@
+   case llvm::Triple::ArchType::loongarch64:
+     return std::make_unique<TargetLoongArch64>(
+         ctx, std::move(trp), std::move(kindMap), targetCPU, targetFeatures, dl);
++  case llvm::Triple::ArchType::wasm32:
++    return std::make_unique<TargetWasm32>(
++        ctx, std::move(trp), std::move(kindMap), targetCPU, targetFeatures, dl);
+   }
+   TODO(mlir::UnknownLoc::get(ctx), "target not implemented");
+ }
+--- a/flang/lib/Optimizer/CodeGen/TypeConverter.cpp
++++ b/flang/lib/Optimizer/CodeGen/TypeConverter.cpp
+@@ -208,7 +208,8 @@
+         mlir::LLVM::LLVMPointerType::get(eleTy.getContext()));
+   // elem_len
+   dataDescFields.push_back(
+-      getDescFieldTypeModel<kElemLenPosInBox>()(&getContext()));
++      mlir::IntegerType::get(&getContext(), getDataLayout().getTypeSizeInBits(
++          mlir::LLVM::LLVMPointerType::get(&getContext()))));
+   // version
+   dataDescFields.push_back(
+       getDescFieldTypeModel<kVersionPosInBox>()(&getContext()));
+@@ -235,7 +236,10 @@
+       rank = 0;
+   }
+   if (rank > 0) {
+-    auto rowTy = getDescFieldTypeModel<kDimsPosInBox>()(&getContext());
++    auto rowTy = mlir::LLVM::LLVMArrayType::get(
++        mlir::IntegerType::get(&getContext(),
++                              getDataLayout().getTypeSizeInBits(
++          mlir::LLVM::LLVMPointerType::get(&getContext()))), 3);
+     dataDescFields.push_back(mlir::LLVM::LLVMArrayType::get(rowTy, rank));
+   }
+   // opt-type-ptr: i8* (see fir.tdesc)
+@@ -244,7 +248,16 @@
+         getExtendedDescFieldTypeModel<kOptTypePtrPosInBox>()(&getContext()));
+     auto rowTy =
+         getExtendedDescFieldTypeModel<kOptRowTypePosInBox>()(&getContext());
+-    dataDescFields.push_back(mlir::LLVM::LLVMArrayType::get(rowTy, 1));
++    mlir::Type lenField = mlir::LLVM::LLVMArrayType::get(rowTy, 1);
++    // The runtime appends DescriptorAddendum at the end of the dimensions.
++    // Its wasm32 pointer is followed by four padding bytes before int64_t LENs,
++    // even when that appended block begins at an address congruent to 4 mod 8.
++    if (getDataLayout().getTypeSizeInBits(
++            mlir::LLVM::LLVMPointerType::get(&getContext())) == 32)
++      lenField = mlir::LLVM::LLVMStructType::getLiteral(
++          &getContext(), {mlir::IntegerType::get(&getContext(), 32), lenField},
++          /*isPacked=*/true);
++    dataDescFields.push_back(lenField);
+     if (auto recTy =
+             mlir::dyn_cast<fir::RecordType>(fir::unwrapSequenceType(ele)))
+       if (recTy.getNumLenParams() > 0) {
+--- a/flang/lib/Optimizer/CodeGen/CodeGen.cpp
++++ b/flang/lib/Optimizer/CodeGen/CodeGen.cpp
+@@ -1579,10 +1579,11 @@
+       // with uninitialized values in Fortran code trying to compare physical
+       // representation of derived types with pointer/allocatable components.
+       // This has been seen in hashing algorithms using TRANSFER.
+-      mlir::Value zero =
+-          genConstantIndex(loc, rewriter.getI64Type(), rewriter, 0);
+-      descriptor = insertField(rewriter, loc, descriptor,
+-                               {getLenParamFieldId(boxTy), 0}, zero);
++      auto lenFieldId = getLenParamFieldId(boxTy);
++      auto lenFieldType = this->getBoxEleTy(llvmBoxTy, {lenFieldId});
++      mlir::Value zero = rewriter.create<mlir::LLVM::ZeroOp>(loc, lenFieldType);
++      descriptor = rewriter.create<mlir::LLVM::InsertValueOp>(
++          loc, descriptor, zero, llvm::ArrayRef<std::int64_t>{lenFieldId});
+     }
+     return descriptor;
+   }
+--- a/flang/lib/Optimizer/CodeGen/FIROpPatterns.cpp
++++ b/flang/lib/Optimizer/CodeGen/FIROpPatterns.cpp
+@@ -109,7 +109,8 @@
+     attachTBAATag(loadOp, boxTy.fir, nullptr, p);
+     return castOp;
+   }
+-  return rewriter.create<mlir::LLVM::ExtractValueOp>(loc, box, boxValue);
++  auto value = rewriter.create<mlir::LLVM::ExtractValueOp>(loc, box, boxValue);
++  return integerCast(loc, rewriter, resultTy, value);
+ }
+ 
+ /// Method to construct code sequence to get the triple for dimension `dim`
+@@ -147,9 +148,10 @@
+          "in memory");
+   mlir::LLVM::GEPOp p = genGEP(loc, boxTy.llvm, rewriter, box, 0,
+                                static_cast<int>(kDimsPosInBox), dim, off);
+-  auto loadOp = rewriter.create<mlir::LLVM::LoadOp>(loc, ty, p);
++  auto fieldTy = getBoxEleTy(boxTy.llvm, {kDimsPosInBox, 0, off});
++  auto loadOp = rewriter.create<mlir::LLVM::LoadOp>(loc, fieldTy, p);
+   attachTBAATag(loadOp, boxTy.fir, nullptr, p);
+-  return loadOp;
++  return integerCast(loc, rewriter, ty, loadOp);
+ }
+ 
+ mlir::Value ConvertFIRToLLVMPattern::getDimFieldFromBox(
+@@ -158,12 +160,14 @@
+   if (mlir::isa<mlir::LLVM::LLVMPointerType>(box.getType())) {
+     mlir::LLVM::GEPOp p = genGEP(loc, boxTy.llvm, rewriter, box, 0,
+                                  static_cast<int>(kDimsPosInBox), dim, off);
+-    auto loadOp = rewriter.create<mlir::LLVM::LoadOp>(loc, ty, p);
++    auto fieldTy = getBoxEleTy(boxTy.llvm, {kDimsPosInBox, dim, off});
++    auto loadOp = rewriter.create<mlir::LLVM::LoadOp>(loc, fieldTy, p);
+     attachTBAATag(loadOp, boxTy.fir, nullptr, p);
+-    return loadOp;
+-  }
+-  return rewriter.create<mlir::LLVM::ExtractValueOp>(
++    return integerCast(loc, rewriter, ty, loadOp);
++  }
++  auto value = rewriter.create<mlir::LLVM::ExtractValueOp>(
+       loc, box, llvm::ArrayRef<std::int64_t>{kDimsPosInBox, dim, off});
++  return integerCast(loc, rewriter, ty, value);
+ }
+ 
+ mlir::Value ConvertFIRToLLVMPattern::getStrideFromBox(
+--- a/flang/lib/Semantics/compute-offsets.cpp
++++ b/flang/lib/Semantics/compute-offsets.cpp
+@@ -423,9 +423,19 @@
+     std::size_t size{runtime::MaxDescriptorSizeInBytes(
+         symbol.Rank(), needAddendum, lenParams)};
+ 
++    if (targetCharacteristics.integerKindForPointer() == 4) {
++      // wasm32 CFI descriptors have a 16-byte header and 12 bytes per rank.
++      // The appended derived-type block has a pointer, padding, and int64 LENs.
++      size = 16u + symbol.Rank() * 12u;
++      if (needAddendum || lenParams > 0)
++        size += 8u + std::max(lenParams, 1) * 8u;
++      return {size, 4};
++    }
+     return {size, targetCharacteristics.descriptorAlignment()};
+   }
+   if (IsProcedurePointer(symbol)) {
++    if (targetCharacteristics.integerKindForPointer() == 4)
++      return {4, 4};
+     return {targetCharacteristics.procedurePointerByteSize(),
+         targetCharacteristics.procedurePointerAlignment()};
+   }
+--- a/flang/lib/Frontend/CompilerInvocation.cpp
++++ b/flang/lib/Frontend/CompilerInvocation.cpp
+@@ -1707,6 +1707,9 @@
+   switch (targetTriple.getArch()) {
+   default:
+     break;
++  case llvm::Triple::ArchType::wasm32:
++    fortranOptions.predefinitions.emplace_back("__wasm32__", "1");
++    break;
+   case llvm::Triple::ArchType::x86_64:
+     fortranOptions.predefinitions.emplace_back("__x86_64__", "1");
+     fortranOptions.predefinitions.emplace_back("__x86_64", "1");
+--- a/flang/module/__fortran_builtins.f90
++++ b/flang/module/__fortran_builtins.f90
+@@ -33,13 +33,18 @@
+ 
+   intrinsic :: selected_int_kind
+   integer, parameter :: int64 = selected_int_kind(18)
++#ifdef __wasm32__
++  integer, parameter :: intptr = selected_int_kind(9)
++#else
++  integer, parameter :: intptr = int64
++#endif
+ 
+   type, bind(c), public :: __builtin_c_ptr
+-    integer(kind=int64), private :: __address
++    integer(kind=intptr), private :: __address
+   end type
+ 
+   type, bind(c), public :: __builtin_c_funptr
+-    integer(kind=int64), private :: __address
++    integer(kind=intptr), private :: __address
+   end type
+ 
+   type, public :: __builtin_event_type

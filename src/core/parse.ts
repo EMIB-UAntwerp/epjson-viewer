@@ -1,3 +1,4 @@
+import { adaptGeometry } from './geometryVersions'
 /**
  * Lenient epJSON → normalized EpModel parser.
  *
@@ -183,12 +184,13 @@ export function parseEpjson(json: unknown, fileName: string): EpModel {
   if (!json || typeof json !== 'object' || Array.isArray(json)) {
     throw new Error('Not an epJSON file: top level must be a JSON object')
   }
-  const root = json as Obj
   const warnings: string[] = []
   const warn = (msg: string) => {
     if (warnings.length < MAX_WARNINGS) warnings.push(msg)
     else if (warnings.length === MAX_WARNINGS) warnings.push('… further warnings suppressed')
   }
+
+  const root = adaptGeometry(json as Obj, warn)
 
   // --- Global rules and building rotation -------------------------------
   const rules = firstOf(root, 'GlobalGeometryRules') ?? {}
@@ -364,7 +366,7 @@ export function parseEpjson(json: unknown, fileName: string): EpModel {
     tilt: 0,
     azimuth: 0,
     fenestration: [],
-    raw: init.raw,
+    raw: ((json as Obj)[init.epType] as Record<string, Obj> | undefined)?.[init.name] ?? init.raw,
   })
 
   const finishRing = (poly: number[]): number[] => {

@@ -1,0 +1,13 @@
+--- a/flang-rt/lib/runtime/external-unit.cpp
++++ b/flang-rt/lib/runtime/external-unit.cpp
+@@ -185,8 +185,8 @@
+     }
+     if (access != Access::Stream) {
+       if (!endfileRecordNumber) {
+-        // Fake it so that we can backspace relative from the end
+-        endfileRecordNumber = std::numeric_limits<std::int64_t>::max() - 2;
++        // Leave room for subsequent appended records, as Sought() does.
++        endfileRecordNumber = std::numeric_limits<std::int64_t>::max() / 2;
+       }
+       currentRecordNumber = *endfileRecordNumber;
+     }

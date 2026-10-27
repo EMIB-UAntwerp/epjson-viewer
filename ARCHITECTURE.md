@@ -74,7 +74,8 @@ The layer boundaries are load-bearing, not stylistic:
   `SceneManager` instance. Other components reach the scene through the store.
 - **`src/components/**` import three.js only via `materials.ts`**, and only for
   palette colors.
-- **`src/stores/model.ts` is the single store** and the only owner of the Worker.
+- **`src/stores/model.ts` is the single store** and owns import jobs, the geometry
+  Worker, and the abort controller for the EnergyPlus conversion client.
   Panels talk to it directly — there is no props drilling and no cross-panel
   emit chain.
 
@@ -82,8 +83,10 @@ The layer boundaries are load-bearing, not stylistic:
 
 ```
 file drop / picker / demo fetch
-  → store.loadFile → store.loadText → Worker
-      → JSON.parse → parseEpjson → buildGeometry → transfer
+  → store.loadFile / store.loadText / store.loadDemo
+  → IDF only: EnergyPlus client → isolated WASM worker → matching-schema conversion → complete source-version epJSON
+  → geometry Worker
+      → JSON.parse → parseEpjson (internal version adapter) → buildGeometry → transfer
   → store: markRaw(model), markRaw(bundle), status = 'ready'
   → ViewerCanvas.initModel → SceneManager.setModel → applyColors
       → setCategoryVisible / setHiddenZones / setInteriorVisible / setGhost
@@ -92,11 +95,22 @@ file drop / picker / demo fetch
 
 Step by step:
 
-1. **Load.** `DropZone`, `TopBar`, or `App.vue`'s global drop handler calls
-   `store.loadFile(file)` → `file.text()` → `store.loadText(name, text)`. The
-   demo buttons go through `store.loadDemo(url, name)` → `fetch` → `loadText`.
-2. **Dispatch.** `loadText` sets `status = 'loading'`, increments `requestId`,
-   and posts a `WorkerRequest` to the module Worker created in `ensureWorker()`.
+1. **Load.** File selection, direct text input and demo fetch each start a job
+   before asynchronous reading. Starting another job or closing the model aborts
+   conversion/fetch, terminates geometry work and invalidates stale responses.
+2. **Convert and dispatch.** IDFs go through `src/energyplus/client.ts`, which
+   creates a fresh native worker. Worker protocol 3 distinguishes `convert`
+   from explicit `upgrade` requests. Normal imports select a full matching
+   schema and never fetch transition assets. Registries/manifests from the
+   older upgrader remain readable but cannot restore automatic upgrading.
+   Full source and converted documents are retained outside `EpModel`.
+   The original geometry-worker message contract is unchanged.
+   See `docs/energyplus.md` and `docs/epjson-schema-coverage.md` for artifacts,
+   schema selection, build adapters and native-reference scope.
+   The store owns an independent upgrade controller, generation ID and source
+   identity guard. An upgrade returns downloads and provenance without posting
+   geometry work or replacing the displayed document. New imports and close
+   invalidate it, including late responses; retries use fresh workers.
 3. **Worker** (`modelWorker.ts`) runs `JSON.parse` (10%) → `parseEpjson` (35%)
    → `buildGeometry` (60%) → transfer (90%), appending build warnings to
    `model.warnings`, then posts `{type: 'done', model, bundle}` with the
@@ -105,7 +119,10 @@ Step by step:
    — that is the staleness guard for a superseded load. Otherwise it stores
    `markRaw(msg.model)` / `markRaw(msg.bundle)`, clears `selected` and
    `hiddenZones`, and flips `status` to `'ready'`.
-5. **Render.** `App.vue` swaps `DropZone` for the ready layout, `ViewerCanvas`
+5. **Render.** `App.vue` shows the viewer whenever a model and bundle exist, so
+   a pending, cancelled or failed replacement keeps the current scene visible.
+   `ImportStatus` shows progress, cancellation, conversion diagnostics and the
+   epJSON/upgraded-IDF downloads. On successful loading, `ViewerCanvas`
    mounts (or its `watch([model, bundle])` fires) and calls `initModel()`, which
    pushes every store field into the imperative scene and finishes with
    `fitAll()`.
@@ -151,6 +168,14 @@ The **worker contract** lives in `src/worker/modelWorker.ts`: `WorkerRequest`
 (`progress` | `done` | `error`). Changing either is a cross-layer change.
 
 ## Coordinate frames and transforms (a known trap) — `src/core/parse.ts`
+
+`geometryVersions.ts` supplies a pure internal adapter before these transforms.
+It warns on unverified versions, resolves Space-to-Zone references and 26.2
+construction assignments, and copies only changed objects. Downloads and
+`surface.raw` retain original epJSON. The common coordinate algorithm is shared
+across the pinned releases; schema-specific exceptions are documented in
+`docs/epjson-schema-coverage.md`.
+
 
 Transforms mirror EnergyPlus `SurfaceGeometry.cc` exactly. All rotation angles
 are **degrees clockwise from north**, which is why every angle is negated
@@ -326,8 +351,9 @@ One setup-style Pinia store, `useModelStore`. The rules that matter:
   This keeps imperative camera moves out of the component tree.
 - **`categoryVisible` is a plain `reactive` record** keyed by `Category` — it is
   small and benefits from deep reactivity.
-- The store owns the Worker (`ensureWorker`) and the `requestId` staleness
-  guard. No component creates a Worker.
+- The store owns the geometry Worker (`ensureWorker`), conversion job abort
+  controller and `requestId` staleness guard, plus independent upgrade cancellation and source identity guards. The conversion client creates an
+  isolated native worker per job. No component creates a Worker.
 - `setHiddenZones` re-anchors the selection: a group selection survives while
   any member is still visible, and only clears when all of them are hidden.
 

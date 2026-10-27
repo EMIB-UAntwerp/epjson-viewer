@@ -10,6 +10,7 @@ import ViewToolbar from './components/ViewToolbar.vue'
 import StatsChip from './components/StatsChip.vue'
 import SelectionLevelToggle from './components/SelectionLevelToggle.vue'
 import DropZone from './components/DropZone.vue'
+import ImportStatus from './components/ImportStatus.vue'
 
 const store = useModelStore()
 
@@ -32,8 +33,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeyDown))
 
 <template>
   <div class="flex h-full flex-col" @dragover.prevent @drop.prevent="onGlobalDrop">
-    <template v-if="store.status === 'ready'">
+    <template v-if="store.model && store.bundle">
       <TopBar />
+      <ImportStatus />
       <div class="flex min-h-0 flex-1">
         <SidePanel />
         <main class="relative min-w-0 flex-1 bg-[#131318]">

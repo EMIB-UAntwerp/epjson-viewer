@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { FileJson, Loader2, TriangleAlert, Upload } from 'lucide-vue-next'
+import { FileJson, Upload } from 'lucide-vue-next'
 import { useModelStore } from '../stores/model'
+import ImportStatus from './ImportStatus.vue'
 
 const store = useModelStore()
 const fileInput = ref<HTMLInputElement>()
@@ -45,25 +46,10 @@ function onFilePicked(e: Event): void {
       </div>
     </div>
 
-    <!-- Loading state -->
-    <div v-if="store.status === 'loading'" class="glass w-[26rem] max-w-full rounded-2xl p-6">
-      <div class="flex items-center gap-3">
-        <Loader2 class="h-5 w-5 animate-spin text-accent-400" />
-        <div class="min-w-0 flex-1">
-          <p class="truncate font-mono text-xs text-ink-200">{{ store.fileName }}</p>
-          <p class="mt-0.5 text-xs text-ink-400">{{ store.progress.phase }}…</p>
-        </div>
-      </div>
-      <div class="mt-4 h-1 overflow-hidden rounded-full bg-ink-800">
-        <div
-          class="h-full rounded-full bg-accent-500 transition-all duration-300"
-          :style="{ width: store.progress.pct + '%' }"
-        />
-      </div>
-    </div>
+    <ImportStatus class="w-[26rem] max-w-full rounded-xl border border-ink-700" />
 
     <!-- Drop area -->
-    <template v-else>
+    <template v-if="store.status !== 'loading'">
       <div
         class="w-[26rem] max-w-full cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-colors duration-150"
         :class="
@@ -74,21 +60,14 @@ function onFilePicked(e: Event): void {
         @click="fileInput?.click()"
         @dragover.prevent="dragOver = true"
         @dragleave="dragOver = false"
-        @drop.prevent="onDrop"
+        @drop.stop.prevent="onDrop"
       >
         <Upload class="mx-auto h-8 w-8" :class="dragOver ? 'text-accent-400' : 'text-ink-400'" />
         <p class="mt-3 text-sm text-ink-200">
-          Drop an <span class="font-mono text-accent-300">.epJSON</span> file here
+          Drop an <span class="font-mono text-accent-300">.idf</span> or
+          <span class="font-mono text-accent-300">.epJSON</span> file here
         </p>
         <p class="mt-1 text-xs text-ink-400">or click to browse</p>
-      </div>
-
-      <div v-if="store.status === 'error'" class="flex w-[26rem] max-w-full items-start gap-2.5 rounded-xl border border-red-500/30 bg-red-500/10 p-3.5">
-        <TriangleAlert class="mt-0.5 h-4 w-4 flex-none text-red-400" />
-        <div class="min-w-0 text-xs">
-          <p class="font-medium text-red-300">Could not load {{ store.fileName || 'file' }}</p>
-          <p class="mt-0.5 break-words text-red-300/80">{{ store.errorMsg }}</p>
-        </div>
       </div>
 
       <div class="flex gap-2">
@@ -116,12 +95,11 @@ function onFilePicked(e: Event): void {
             rel="noopener"
             class="text-ink-400 underline decoration-ink-600 underline-offset-2 transition-colors duration-150 hover:text-accent-300"
             >EnergyPlus</a
-          >. Convert IDF files with
-          <span class="font-mono text-ink-400">energyplus --convert-only your_file.idf</span>.
+          >. IDF conversion runs locally with EnergyPlus, downloaded when needed.
         </p>
       </div>
     </template>
 
-    <input ref="fileInput" type="file" accept=".epJSON,.epjson,.json" class="hidden" @change="onFilePicked" />
+    <input ref="fileInput" type="file" accept=".idf,.IDF,.epJSON,.epjson,.json" class="hidden" @change="onFilePicked" />
   </div>
 </template>

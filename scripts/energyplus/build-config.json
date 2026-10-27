@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/NatLabRockies/EnergyPlus.git",
+  "ref": "v26.1.0",
+  "commit": "6f2e40d10250a105b49966baa24d843711e61048",
+  "energyPlusVersion": "26.1.0",
+  "emscriptenVersion": "6.0.0",
+  "buildRevision": 1
+}
