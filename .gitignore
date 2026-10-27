@@ -6,7 +6,7 @@ public/energyplus/
 *.tsbuildinfo
 
 # Research data — contains real addresses, never commit
-data/
+/data
 
 # Large reference files (EnergyPlus schema + sources, publicly available upstream)
 docs/references/
